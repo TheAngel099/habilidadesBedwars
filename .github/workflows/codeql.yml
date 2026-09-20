@@ -64,11 +64,11 @@ jobs:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
 
-    - name: Set up JDK 25
+    - name: Set up JDK 21 for CodeQL
       if: matrix.build-mode == 'manual'
       uses: actions/setup-java@v4
       with:
-        java-version: '25'
+        java-version: '21'
         distribution: 'temurin'
         cache: maven
 
@@ -76,7 +76,7 @@ jobs:
       if: matrix.build-mode == 'manual'
       shell: bash
       run: |
-        mvn -B clean package -DskipTests
+        mvn -B clean package -DskipTests -Djava.version=21
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
