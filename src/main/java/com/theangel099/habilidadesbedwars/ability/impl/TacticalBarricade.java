@@ -36,7 +36,8 @@ public class TacticalBarricade extends Ability {
             this.width = mechanicsSection.getInt("width", 3);
             this.height = mechanicsSection.getInt("height", 2);
             String matName = mechanicsSection.getString("display-block", "BRICKS");
-            Material mat = Material.matchMaterial(matName);
+            if (matName == null) matName = "BRICKS";
+            Material mat = Material.getMaterial(matName.toUpperCase());
             this.displayBlockMaterial = (mat != null) ? mat : Material.BRICKS;
         } else {
             this.durationSeconds = 5;

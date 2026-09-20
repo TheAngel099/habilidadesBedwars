@@ -21,7 +21,7 @@ public class AbilityManager {
         loadAbilities();
     }
 
-    public void loadAbilities() {
+    public final void loadAbilities() {
         abilitiesById.clear();
         abilitiesByMaterial.clear();
         
@@ -35,6 +35,7 @@ public class AbilityManager {
     }
 
     private void registerAbility(Ability ability) {
+        ability.loadConfig(); // Inicializa variables como itemMaterial y config custom
         if (plugin.getConfigManager().isAbilityEnabled(ability.getId())) {
             abilitiesById.put(ability.getId(), ability);
             abilitiesByMaterial.put(ability.getItemMaterial(), ability);

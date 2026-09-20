@@ -15,7 +15,7 @@ public abstract class Ability {
     protected Material itemMaterial;
     protected int cooldown; // en segundos
 
-    public Ability(HabilidadesBedwarsPlugin plugin, String id) {
+    protected Ability(HabilidadesBedwarsPlugin plugin, String id) {
         this.plugin = plugin;
         this.id = id;
     }
@@ -33,7 +33,8 @@ public abstract class Ability {
                 this.category = AbilityCategory.COMUN;
             }
             String matName = section.getString("item", "STONE");
-            Material mat = Material.matchMaterial(matName);
+            if (matName == null) matName = "STONE";
+            Material mat = Material.getMaterial(matName.toUpperCase());
             this.itemMaterial = (mat != null) ? mat : Material.STONE;
             this.cooldown = section.getInt("cooldown", 10);
             
