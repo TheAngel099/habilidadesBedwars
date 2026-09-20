@@ -18,7 +18,6 @@ public abstract class Ability {
     public Ability(HabilidadesBedwarsPlugin plugin, String id) {
         this.plugin = plugin;
         this.id = id;
-        loadConfig();
     }
 
     /**
