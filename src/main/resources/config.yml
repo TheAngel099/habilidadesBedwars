@@ -52,3 +52,28 @@ abilities:
       # Bloque visual de la barrera
       display-block: "BRICKS"
 
+  repulsor_blast:
+    enabled: true
+    name: "&cRepulsor Blast"
+    category: "EPICO"
+    item: "BLAZE_ROD"
+    custom-model-data: 0
+    cooldown: 15
+    mechanics:
+      radius: 5.0
+      knockback-force: 1.5
+      y-boost: 0.8
+      particle-count: 50
+
+  spectral_vision:
+    enabled: true
+    name: "&aSpectral Vision"
+    category: "COMUN"
+    item: "ENDER_EYE"
+    custom-model-data: 0
+    cooldown: 25
+    mechanics:
+      radius: 30.0
+      duration-seconds: 10
+
+

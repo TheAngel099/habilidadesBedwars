@@ -28,6 +28,8 @@ public class AbilityManager {
         try {
             registerAbility(new KineticDash(plugin));
             registerAbility(new TacticalBarricade(plugin));
+            registerAbility(new com.theangel099.habilidadesbedwars.ability.impl.RepulsorBlast(plugin));
+            registerAbility(new com.theangel099.habilidadesbedwars.ability.impl.SpectralVision(plugin));
             plugin.getLogger().info("Habilidades cargadas exitosamente: " + abilitiesById.size());
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error crítico al cargar las habilidades.", e);

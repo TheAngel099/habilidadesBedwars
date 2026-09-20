@@ -34,4 +34,45 @@ public class BedwarsIntegration {
             return false; 
         }
     }
+
+    /**
+     * Verifica si dos jugadores están en la misma arena y pertenecen a equipos distintos.
+     */
+    public static boolean areEnemies(Player p1, Player p2) {
+        if (p1.equals(p2)) return false;
+        
+        try {
+            Class<?> apiClass = Class.forName("de.marcely.bedwars.api.BedwarsAPI");
+            Method getArenaMethod = apiClass.getMethod("getArenaByPlayer", Player.class);
+            
+            Object arena1 = getArenaMethod.invoke(null, p1);
+            Object arena2 = getArenaMethod.invoke(null, p2);
+            
+            // Si no están en la misma arena, no son enemigos activos en la misma partida
+            if (arena1 == null || arena2 == null || !arena1.equals(arena2)) {
+                return false;
+            }
+            
+            // Intentar obtener los equipos
+            Method getTeamMethod;
+            try {
+                getTeamMethod = arena1.getClass().getMethod("getPlayerTeam", Player.class);
+            } catch (NoSuchMethodException e) {
+                getTeamMethod = arena1.getClass().getMethod("getTeam", Player.class);
+            }
+            
+            Object team1 = getTeamMethod.invoke(arena1, p1);
+            Object team2 = getTeamMethod.invoke(arena2, p2);
+            
+            // Si ambos tienen equipo y son diferentes, son enemigos
+            if (team1 != null && team2 != null) {
+                return !team1.equals(team2);
+            }
+            
+            return true;
+        } catch (Exception e) {
+            // Fallback en entorno sin Bedwars: cualquiera distinto es enemigo
+            return true;
+        }
+    }
 }

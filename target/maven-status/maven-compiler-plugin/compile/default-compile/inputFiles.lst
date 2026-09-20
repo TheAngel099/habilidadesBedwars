@@ -2,6 +2,8 @@
 /workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/Ability.java
 /workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/AbilityCategory.java
 /workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/impl/KineticDash.java
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/impl/RepulsorBlast.java
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/impl/SpectralVision.java
 /workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/impl/TacticalBarricade.java
 /workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/listener/PlayerInteractListener.java
 /workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/manager/AbilityManager.java

@@ -8,5 +8,7 @@ com/theangel099/habilidadesbedwars/mbedwars/BedwarsIntegration.class
 com/theangel099/habilidadesbedwars/ability/Ability.class
 com/theangel099/habilidadesbedwars/ability/AbilityCategory.class
 com/theangel099/habilidadesbedwars/manager/FallDamageManager.class
+com/theangel099/habilidadesbedwars/ability/impl/RepulsorBlast.class
+com/theangel099/habilidadesbedwars/ability/impl/SpectralVision.class
 com/theangel099/habilidadesbedwars/manager/ConfigManager.class
 com/theangel099/habilidadesbedwars/manager/AbilityManager.class
