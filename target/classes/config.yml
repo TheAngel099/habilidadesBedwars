@@ -1,0 +1,54 @@
+# ========================================== #
+#     HabilidadesBedwars - Configuración     #
+# ========================================== #
+# Este archivo define las características de las habilidades para mantener
+# la escalabilidad, evitar dependencias de código duro (hardcode) y 
+# permitir ediciones en tiempo real.
+
+# Categorías disponibles: COMUN, EPICO, LEGENDARIO
+# Las categorías pueden determinar el formato del mensaje o el color en la tienda.
+
+settings:
+  # Tiempo en segundos que un jugador no recibe daño de caída tras usar un dash o salto
+  fall-damage-immunity-duration: 3
+  
+  # Mensajes de la ActionBar
+  messages:
+    cooldown-active: "&c❄ %ability% en enfriamiento: %time%s"
+    ability-ready: "&a✔ %ability% lista para usarse!"
+    not-enough-mana: "&cNo puedes usar esto aún." # Por si se implementa maná a futuro
+
+abilities:
+  # Identificador interno (no cambiar)
+  kinetic_dash:
+    enabled: true
+    name: "&bKinetic Dash"
+    category: "COMUN"
+    # Material del ítem en la tienda o inventario
+    item: "WIND_CHARGE"
+    custom-model-data: 0
+    # Tiempo de recarga en segundos
+    cooldown: 8
+    # Configuraciones específicas de esta habilidad
+    mechanics:
+      velocity-multiplier: 1.5
+      y-boost: 0.5
+      particle-count: 20
+      sound-pitch: 1.0
+
+  tactical_barricade:
+    enabled: true
+    name: "&6Tactical Barricade"
+    category: "EPICO"
+    item: "BRICKS"
+    custom-model-data: 0
+    cooldown: 20
+    mechanics:
+      # Tiempo en segundos que la barrera permanece en el campo
+      duration: 5
+      # Dimensiones de la barrera (Ancho x Alto)
+      width: 3
+      height: 2
+      # Bloque visual de la barrera
+      display-block: "BRICKS"
+

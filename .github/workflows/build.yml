@@ -1,0 +1,35 @@
+name: Java CI Build
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    # El usuario solicitó compatibilidad con Java 25 (el fork es 26.1.2 y requiere Java 25 en adelante).
+    # Dependiendo de si la Action 'setup-java' soporta Java 25 formalmente en este momento, 
+    # forzaremos la última versión (ej. zulu o temurin).
+    - name: Set up JDK 25
+      uses: actions/setup-java@v4
+      with:
+        java-version: '25'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+      
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: HabilidadesBedwars-JAR
+        path: target/habilidadesbedwars-*.jar
+

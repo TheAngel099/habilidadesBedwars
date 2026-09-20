@@ -1,0 +1,15 @@
+name: HabilidadesBedwars
+version: '${project.version}'
+main: com.theangel099.habilidadesbedwars.HabilidadesBedwarsPlugin
+api-version: '1.21'
+authors: [TheAngel099]
+description: Addon de Habilidades Modernas para Marcely's Bedwars
+
+depend:
+  - MBedwars
+
+softdepend:
+  - MBedwars-Cosmetics
+  - MBedwarsTweaks
+  - PrivateGamesAddon
+

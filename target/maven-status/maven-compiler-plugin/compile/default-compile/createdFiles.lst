@@ -1,0 +1,12 @@
+com/theangel099/habilidadesbedwars/listener/PlayerInteractListener.class
+com/theangel099/habilidadesbedwars/ability/impl/KineticDash.class
+com/theangel099/habilidadesbedwars/HabilidadesBedwarsPlugin.class
+com/theangel099/habilidadesbedwars/ability/impl/TacticalBarricade.class
+com/theangel099/habilidadesbedwars/manager/CooldownManager.class
+com/theangel099/habilidadesbedwars/ability/impl/TacticalBarricade$1.class
+com/theangel099/habilidadesbedwars/mbedwars/BedwarsIntegration.class
+com/theangel099/habilidadesbedwars/ability/Ability.class
+com/theangel099/habilidadesbedwars/ability/AbilityCategory.class
+com/theangel099/habilidadesbedwars/manager/FallDamageManager.class
+com/theangel099/habilidadesbedwars/manager/ConfigManager.class
+com/theangel099/habilidadesbedwars/manager/AbilityManager.class

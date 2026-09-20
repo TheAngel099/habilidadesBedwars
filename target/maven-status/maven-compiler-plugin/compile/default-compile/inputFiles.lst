@@ -1,0 +1,11 @@
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/HabilidadesBedwarsPlugin.java
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/Ability.java
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/AbilityCategory.java
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/impl/KineticDash.java
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/impl/TacticalBarricade.java
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/listener/PlayerInteractListener.java
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/manager/AbilityManager.java
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/manager/ConfigManager.java
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/manager/CooldownManager.java
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/manager/FallDamageManager.java
+/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/mbedwars/BedwarsIntegration.java
