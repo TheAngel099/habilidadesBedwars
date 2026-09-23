@@ -14,10 +14,13 @@ public abstract class Ability {
     protected AbilityCategory category;
     protected Material itemMaterial;
     protected int cooldown; // en segundos
+    protected int customModelData;
+    protected final org.bukkit.NamespacedKey abilityKey;
 
     protected Ability(HabilidadesBedwarsPlugin plugin, String id) {
         this.plugin = plugin;
         this.id = id;
+        this.abilityKey = new org.bukkit.NamespacedKey(plugin, "ability_id");
     }
 
     /**
@@ -37,10 +40,44 @@ public abstract class Ability {
             Material mat = Material.getMaterial(matName.toUpperCase());
             this.itemMaterial = (mat != null) ? mat : Material.STONE;
             this.cooldown = section.getInt("cooldown", 10);
+            this.customModelData = section.getInt("custom-model-data", 0);
             
             // Permitir que las subclases carguen mecánicas personalizadas
             loadMechanics(section.getConfigurationSection("mechanics"));
         }
+    }
+
+    /**
+     * Crea un ItemStack representativo de esta habilidad con PDC único.
+     */
+    public org.bukkit.inventory.ItemStack createItem(int amount) {
+        org.bukkit.inventory.ItemStack item = new org.bukkit.inventory.ItemStack(this.itemMaterial, Math.max(1, amount));
+        org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            // Adventure API para nombre
+            net.kyori.adventure.text.Component displayName = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(this.name);
+            meta.displayName(displayName);
+            
+            // Marcar con PDC único para evitar colisiones con ítems regulares
+            meta.getPersistentDataContainer().set(this.abilityKey, org.bukkit.persistence.PersistentDataType.STRING, this.id);
+            
+            if (this.customModelData > 0) {
+                meta.setCustomModelData(this.customModelData);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    /**
+     * Comprueba si un ItemStack dado contiene el tag PDC correspondiente a esta habilidad.
+     */
+    public boolean isAbilityItem(org.bukkit.inventory.ItemStack item) {
+        if (item == null || !item.hasItemMeta()) return false;
+        org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
+        if (meta == null) return false;
+        String val = meta.getPersistentDataContainer().get(this.abilityKey, org.bukkit.persistence.PersistentDataType.STRING);
+        return this.id.equalsIgnoreCase(val);
     }
 
     /**
@@ -61,5 +98,7 @@ public abstract class Ability {
     public AbilityCategory getCategory() { return category; }
     public Material getItemMaterial() { return itemMaterial; }
     public int getCooldown() { return cooldown; }
+    public int getCustomModelData() { return customModelData; }
+    public org.bukkit.NamespacedKey getAbilityKey() { return abilityKey; }
 }
 

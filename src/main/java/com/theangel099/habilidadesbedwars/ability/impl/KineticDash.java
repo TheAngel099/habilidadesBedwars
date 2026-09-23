@@ -49,11 +49,12 @@ public class KineticDash extends Ability {
         // Otorgar inmunidad al daño de caída
         plugin.getFallDamageManager().grantImmunity(player);
         
-        // Efectos visuales y de sonido
+        // Efectos visuales y de sonido (Partículas modernas de ráfaga y viento)
         try {
-            loc.getWorld().spawnParticle(Particle.CLOUD, loc.add(0, 1, 0), particleCount, 0.5, 0.5, 0.5, 0.1);
+            loc.getWorld().spawnParticle(Particle.GUST, loc.clone().add(0, 0.5, 0), particleCount, 0.3, 0.3, 0.3, 0.05);
+            loc.getWorld().spawnParticle(Particle.GUST_EMITTER_SMALL, loc.clone().add(0, 0.5, 0), 1);
         } catch (Exception e) {
-            // Fallback general
+            loc.getWorld().spawnParticle(Particle.CLOUD, loc.clone().add(0, 0.5, 0), particleCount, 0.5, 0.5, 0.5, 0.1);
         }
         
         loc.getWorld().playSound(loc, Sound.ENTITY_WIND_CHARGE_WIND_BURST, 1.0f, soundPitch);

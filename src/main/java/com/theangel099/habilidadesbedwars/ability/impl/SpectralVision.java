@@ -38,7 +38,7 @@ public class SpectralVision extends Ability {
         Location loc = player.getLocation();
         
         loc.getWorld().playSound(loc, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 0.5f);
-        loc.getWorld().spawnParticle(Particle.PORTAL, loc.add(0, 1, 0), 100, 1.0, 1.0, 1.0, 0.5);
+        loc.getWorld().spawnParticle(Particle.PORTAL, loc.clone().add(0, 1, 0), 100, 1.0, 1.0, 1.0, 0.5);
 
         List<Entity> nearbyEntities = player.getNearbyEntities(radius, radius, radius);
         int enemiesRevealed = 0;
@@ -61,11 +61,17 @@ public class SpectralVision extends Ability {
             }
         }
         
-        // Notificar al jugador cuántos encontró (usando la API de Adventure de forma sencilla)
+        // Notificar al jugador cuántos encontró usando Adventure API puro (sin §)
         if (enemiesRevealed > 0) {
-            player.sendMessage("§a[Spectral Vision] §fHas revelado a §e" + enemiesRevealed + " §fenemigos cercanos por " + durationSeconds + "s.");
+            net.kyori.adventure.text.Component msg = net.kyori.adventure.text.Component.text("[Spectral Vision] ", net.kyori.adventure.text.format.NamedTextColor.GREEN)
+                    .append(net.kyori.adventure.text.Component.text("Has revelado a ", net.kyori.adventure.text.format.NamedTextColor.WHITE))
+                    .append(net.kyori.adventure.text.Component.text(enemiesRevealed, net.kyori.adventure.text.format.NamedTextColor.YELLOW))
+                    .append(net.kyori.adventure.text.Component.text(" enemigos cercanos por " + durationSeconds + "s.", net.kyori.adventure.text.format.NamedTextColor.WHITE));
+            player.sendMessage(msg);
         } else {
-            player.sendMessage("§c[Spectral Vision] §fNo hay enemigos cercanos en un radio de " + (int)radius + " bloques.");
+            net.kyori.adventure.text.Component msg = net.kyori.adventure.text.Component.text("[Spectral Vision] ", net.kyori.adventure.text.format.NamedTextColor.RED)
+                    .append(net.kyori.adventure.text.Component.text("No hay enemigos cercanos en un radio de " + (int) radius + " bloques.", net.kyori.adventure.text.format.NamedTextColor.WHITE));
+            player.sendMessage(msg);
         }
         
         return true;

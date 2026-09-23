@@ -36,8 +36,10 @@ public class CooldownManager {
         }
 
         long expirationTime = playerCooldowns.get(ability.getId());
-        if (System.currentTimeMillis() < expirationTime) {
-            long remainingSeconds = (expirationTime - System.currentTimeMillis()) / 1000;
+        long currentTime = System.currentTimeMillis();
+        if (currentTime < expirationTime) {
+            long remainingMillis = expirationTime - currentTime;
+            long remainingSeconds = Math.max(1, (long) Math.ceil(remainingMillis / 1000.0));
             sendCooldownMessage(player, ability, remainingSeconds);
             return true;
         }
@@ -45,6 +47,14 @@ public class CooldownManager {
         // Ya expiró, limpiamos la memoria
         playerCooldowns.remove(ability.getId());
         return false;
+    }
+
+    public void cleanupPlayer(UUID uuid) {
+        cooldowns.remove(uuid);
+    }
+
+    public void clearAll() {
+        cooldowns.clear();
     }
 
     private void sendCooldownMessage(Player player, Ability ability, long remainingSeconds) {

@@ -42,12 +42,12 @@ public class RepulsorBlast extends Ability {
     public boolean cast(Player player) {
         Location loc = player.getLocation();
         
-        // Reproducir partículas de onda expansiva
+        // Reproducir partículas de onda expansiva modernas
         try {
-            loc.getWorld().spawnParticle(Particle.SONIC_BOOM, loc.add(0, 1, 0), 1);
-            loc.getWorld().spawnParticle(Particle.CLOUD, loc, particleCount, radius/2, 0.2, radius/2, 0.2);
+            loc.getWorld().spawnParticle(Particle.SONIC_BOOM, loc.clone().add(0, 1, 0), 1);
+            loc.getWorld().spawnParticle(Particle.TRIAL_SPAWNER_DETECTION, loc.clone().add(0, 0.5, 0), particleCount, radius / 2, 0.3, radius / 2, 0.1);
         } catch (Exception e) {
-            loc.getWorld().spawnParticle(Particle.CLOUD, loc, particleCount, radius/2, 0.2, radius/2, 0.2);
+            loc.getWorld().spawnParticle(Particle.CLOUD, loc.clone().add(0, 0.5, 0), particleCount, radius / 2, 0.2, radius / 2, 0.2);
         }
         
         loc.getWorld().playSound(loc, Sound.ENTITY_WARDEN_SONIC_BOOM, 1.0f, 1.0f);

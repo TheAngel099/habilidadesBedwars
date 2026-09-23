@@ -4,6 +4,7 @@ import com.theangel099.habilidadesbedwars.manager.ConfigManager;
 import com.theangel099.habilidadesbedwars.manager.CooldownManager;
 import com.theangel099.habilidadesbedwars.manager.FallDamageManager;
 import com.theangel099.habilidadesbedwars.manager.AbilityManager;
+import com.theangel099.habilidadesbedwars.manager.ActiveEntityManager;
 import com.theangel099.habilidadesbedwars.listener.PlayerInteractListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,6 +17,7 @@ public class HabilidadesBedwarsPlugin extends JavaPlugin {
     private CooldownManager cooldownManager;
     private FallDamageManager fallDamageManager;
     private AbilityManager abilityManager;
+    private ActiveEntityManager activeEntityManager;
 
     @Override
     public void onEnable() {
@@ -30,6 +32,7 @@ public class HabilidadesBedwarsPlugin extends JavaPlugin {
             this.configManager.load();
             
             // 2. Inicializar Managers
+            this.activeEntityManager = new ActiveEntityManager(this);
             this.cooldownManager = new CooldownManager(this);
             this.fallDamageManager = new FallDamageManager(this);
             this.abilityManager = new AbilityManager(this);
@@ -37,6 +40,7 @@ public class HabilidadesBedwarsPlugin extends JavaPlugin {
             // 3. Registrar Listeners
             getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
             getServer().getPluginManager().registerEvents(this.fallDamageManager, this);
+            getServer().getPluginManager().registerEvents(this.activeEntityManager, this);
             
             // 4. Integración con MBedwars (Tienda/Addon API)
             // Aquí irá el registro en el API de MBedwars más adelante
@@ -50,8 +54,17 @@ public class HabilidadesBedwarsPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getLogger().info("HabilidadesBedwars deshabilitado.");
-        // Limpiar recursos si es necesario
+        getLogger().info("Deshabilitando HabilidadesBedwars y limpiando entidades activas...");
+        if (this.activeEntityManager != null) {
+            this.activeEntityManager.cleanupAll();
+        }
+        if (this.cooldownManager != null) {
+            this.cooldownManager.clearAll();
+        }
+        if (this.fallDamageManager != null) {
+            this.fallDamageManager.clearAll();
+        }
+        getLogger().info("HabilidadesBedwars deshabilitado limpiamente.");
     }
 
     public static HabilidadesBedwarsPlugin getInstance() {
@@ -72,5 +85,9 @@ public class HabilidadesBedwarsPlugin extends JavaPlugin {
 
     public AbilityManager getAbilityManager() {
         return abilityManager;
+    }
+
+    public ActiveEntityManager getActiveEntityManager() {
+        return activeEntityManager;
     }
 }

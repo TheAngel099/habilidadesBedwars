@@ -53,5 +53,13 @@ public class FallDamageManager implements Listener {
             }
         }
     }
+
+    public void cleanupPlayer(UUID uuid) {
+        immunePlayers.remove(uuid);
+    }
+
+    public void clearAll() {
+        immunePlayers.clear();
+    }
 }
 

@@ -1,5 +1,5 @@
 name: HabilidadesBedwars
-version: '${project.version}'
+version: '1.0.0-SNAPSHOT'
 main: com.theangel099.habilidadesbedwars.HabilidadesBedwarsPlugin
 api-version: '1.21'
 authors: [TheAngel099]

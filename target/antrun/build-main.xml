@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="maven-antrun-" default="main">
+  <target name="main">
+    <copy file="C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\target/habilidadesbedwars-1.0.0-SNAPSHOT.jar" todir="C:/Users/AlexRaton/Desktop/HOST BEDWARS/plugins/update" overwrite="true" />
+  </target>
+</project>

@@ -1,13 +1,14 @@
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/HabilidadesBedwarsPlugin.java
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/Ability.java
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/AbilityCategory.java
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/impl/KineticDash.java
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/impl/RepulsorBlast.java
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/impl/SpectralVision.java
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/ability/impl/TacticalBarricade.java
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/listener/PlayerInteractListener.java
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/manager/AbilityManager.java
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/manager/ConfigManager.java
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/manager/CooldownManager.java
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/manager/FallDamageManager.java
-/workspaces/habilidadesBedwars/src/main/java/com/theangel099/habilidadesbedwars/mbedwars/BedwarsIntegration.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\Ability.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\AbilityCategory.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\impl\KineticDash.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\impl\RepulsorBlast.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\impl\SpectralVision.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\impl\TacticalBarricade.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\HabilidadesBedwarsPlugin.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\listener\PlayerInteractListener.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\manager\AbilityManager.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\manager\ActiveEntityManager.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\manager\ConfigManager.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\manager\CooldownManager.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\manager\FallDamageManager.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\mbedwars\BedwarsIntegration.java

@@ -16,8 +16,11 @@ public class AbilityManager {
     private final Map<String, Ability> abilitiesById = new HashMap<>();
     private final Map<Material, Ability> abilitiesByMaterial = new HashMap<>();
 
+    private final org.bukkit.NamespacedKey abilityKey;
+
     public AbilityManager(HabilidadesBedwarsPlugin plugin) {
         this.plugin = plugin;
+        this.abilityKey = new org.bukkit.NamespacedKey(plugin, "ability_id");
         loadAbilities();
     }
 
@@ -44,12 +47,31 @@ public class AbilityManager {
         }
     }
 
+    /**
+     * Identifica una habilidad a partir de un ItemStack revisando su tag PDC seguro.
+     */
+    public Ability getAbilityByItem(org.bukkit.inventory.ItemStack item) {
+        if (item == null || !item.hasItemMeta()) return null;
+        org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
+        if (meta == null) return null;
+        
+        String id = meta.getPersistentDataContainer().get(this.abilityKey, org.bukkit.persistence.PersistentDataType.STRING);
+        if (id != null) {
+            return abilitiesById.get(id);
+        }
+        return null;
+    }
+
     public Ability getAbilityById(String id) {
         return abilitiesById.get(id);
     }
 
     public Ability getAbilityByMaterial(Material material) {
         return abilitiesByMaterial.get(material);
+    }
+
+    public Map<String, Ability> getAbilities() {
+        return abilitiesById;
     }
 }
 
