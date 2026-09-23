@@ -15,6 +15,7 @@ public abstract class Ability {
     protected Material itemMaterial;
     protected int cooldown; // en segundos
     protected int customModelData;
+    protected java.util.List<String> lore;
     protected final org.bukkit.NamespacedKey abilityKey;
 
     protected Ability(HabilidadesBedwarsPlugin plugin, String id) {
@@ -41,6 +42,7 @@ public abstract class Ability {
             this.itemMaterial = (mat != null) ? mat : Material.STONE;
             this.cooldown = section.getInt("cooldown", 10);
             this.customModelData = section.getInt("custom-model-data", 0);
+            this.lore = section.getStringList("lore");
             
             // Permitir que las subclases carguen mecánicas personalizadas
             loadMechanics(section.getConfigurationSection("mechanics"));
@@ -57,6 +59,15 @@ public abstract class Ability {
             // Adventure API para nombre
             net.kyori.adventure.text.Component displayName = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(this.name);
             meta.displayName(displayName);
+            
+            if (this.lore != null && !this.lore.isEmpty()) {
+                java.util.List<net.kyori.adventure.text.Component> loreComponents = new java.util.ArrayList<>();
+                for (String line : this.lore) {
+                    String parsedLine = line.replace("%cooldown%", String.valueOf(this.cooldown));
+                    loreComponents.add(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(parsedLine));
+                }
+                meta.lore(loreComponents);
+            }
             
             // Marcar con PDC único para evitar colisiones con ítems regulares
             meta.getPersistentDataContainer().set(this.abilityKey, org.bukkit.persistence.PersistentDataType.STRING, this.id);

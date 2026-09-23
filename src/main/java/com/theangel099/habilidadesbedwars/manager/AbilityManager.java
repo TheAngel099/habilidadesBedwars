@@ -2,8 +2,10 @@ package com.theangel099.habilidadesbedwars.manager;
 
 import com.theangel099.habilidadesbedwars.HabilidadesBedwarsPlugin;
 import com.theangel099.habilidadesbedwars.ability.Ability;
-import com.theangel099.habilidadesbedwars.ability.impl.KineticDash;
-import com.theangel099.habilidadesbedwars.ability.impl.TacticalBarricade;
+import com.theangel099.habilidadesbedwars.ability.impl.comun.KineticDash;
+import com.theangel099.habilidadesbedwars.ability.impl.epico.RepulsorBlast;
+import com.theangel099.habilidadesbedwars.ability.impl.epico.TacticalBarricade;
+import com.theangel099.habilidadesbedwars.ability.impl.legendario.SpectralVision;
 import org.bukkit.Material;
 
 import java.util.HashMap;
@@ -29,10 +31,17 @@ public class AbilityManager {
         abilitiesByMaterial.clear();
         
         try {
+            // Comunes
             registerAbility(new KineticDash(plugin));
+            registerAbility(new com.theangel099.habilidadesbedwars.ability.impl.comun.FrostProjectile(plugin));
+
+            // Épicas
             registerAbility(new TacticalBarricade(plugin));
-            registerAbility(new com.theangel099.habilidadesbedwars.ability.impl.RepulsorBlast(plugin));
-            registerAbility(new com.theangel099.habilidadesbedwars.ability.impl.SpectralVision(plugin));
+            registerAbility(new RepulsorBlast(plugin));
+
+            // Legendarias
+            registerAbility(new SpectralVision(plugin));
+
             plugin.getLogger().info("Habilidades cargadas exitosamente: " + abilitiesById.size());
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error crítico al cargar las habilidades.", e);

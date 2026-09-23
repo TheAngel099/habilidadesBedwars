@@ -1,4 +1,4 @@
-package com.theangel099.habilidadesbedwars.ability.impl;
+package com.theangel099.habilidadesbedwars.ability.impl.comun;
 
 import com.theangel099.habilidadesbedwars.HabilidadesBedwarsPlugin;
 import com.theangel099.habilidadesbedwars.ability.Ability;

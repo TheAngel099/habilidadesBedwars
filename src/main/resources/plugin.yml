@@ -9,7 +9,13 @@ depend:
   - MBedwars
 
 softdepend:
-  - MBedwars-Cosmetics
+  - BedwarsCosmetics
   - MBedwarsTweaks
   - PrivateGamesAddon
+
+commands:
+  habilidadesbedwars:
+    description: Comando principal del plugin de habilidades.
+    aliases: [hb, habilidades]
+    permission: habilidadesbedwars.admin
 

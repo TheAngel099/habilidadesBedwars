@@ -58,7 +58,14 @@ public class PlayerInteractListener implements Listener {
             return;
         }
 
-        // Castear la habilidad con manejo de errores
+        // Verificar si la habilidad está equipada en BedwarsCosmetics
+        if (!plugin.getCosmeticsHook().hasAbilityEquipped(player, ability.getId())) {
+            player.sendMessage(net.kyori.adventure.text.Component.text("¡No tienes esta habilidad equipada! Ve a la tienda de cosméticos para equiparla.", net.kyori.adventure.text.format.NamedTextColor.RED));
+            return;
+        }
+
+        // Castear la habilidad con manejo de errores y profiler
+        com.theangel099.habilidadesbedwars.utils.Profiler profiler = new com.theangel099.habilidadesbedwars.utils.Profiler(plugin, "Ability." + ability.getId());
         try {
             boolean success = ability.cast(player);
             if (success) {
@@ -68,9 +75,10 @@ public class PlayerInteractListener implements Listener {
                 // item.setAmount(item.getAmount() - 1);
             }
         } catch (Exception e) {
-            plugin.getLogger().log(java.util.logging.Level.SEVERE, 
-                "Error crítico al ejecutar la habilidad '" + ability.getId() + "' por el jugador " + player.getName() + ". Revisa el stacktrace para identificar el problema específico:", e);
+            com.theangel099.habilidadesbedwars.utils.ErrorLogger.logAbilityError(plugin, ability.getId(), e);
             player.sendMessage(net.kyori.adventure.text.Component.text("Ocurrió un error interno al usar esta habilidad. Contacta a un administrador.", net.kyori.adventure.text.format.NamedTextColor.RED));
+        } finally {
+            profiler.stop();
         }
     }
 }

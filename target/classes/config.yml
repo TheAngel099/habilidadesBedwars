@@ -29,6 +29,12 @@ abilities:
     custom-model-data: 0
     # Tiempo de recarga en segundos
     cooldown: 8
+    lore:
+      - "&7Impúlsate hacia adelante con gran"
+      - "&7velocidad en la dirección que mires."
+      - ""
+      - "&eModo de uso: &fClick Derecho"
+      - "&eEnfriamiento: &f%cooldown%s"
     # Configuraciones específicas de esta habilidad
     mechanics:
       velocity-multiplier: 1.5
@@ -43,6 +49,13 @@ abilities:
     item: "BRICKS"
     custom-model-data: 0
     cooldown: 20
+    lore:
+      - "&7Genera una barrera de ladrillos frente"
+      - "&7a ti para cubrirte de proyectiles."
+      - ""
+      - "&eDuración: &f5 segundos"
+      - "&eModo de uso: &fClick Derecho"
+      - "&eEnfriamiento: &f%cooldown%s"
     mechanics:
       # Tiempo en segundos que la barrera permanece en el campo
       duration: 5
@@ -59,6 +72,13 @@ abilities:
     item: "BLAZE_ROD"
     custom-model-data: 0
     cooldown: 15
+    lore:
+      - "&7Crea una explosión que empuja"
+      - "&7a los enemigos en un área cercana."
+      - ""
+      - "&eRadio: &f5.0 bloques"
+      - "&eModo de uso: &fClick Derecho"
+      - "&eEnfriamiento: &f%cooldown%s"
     mechanics:
       radius: 5.0
       knockback-force: 1.5
@@ -72,6 +92,14 @@ abilities:
     item: "ENDER_EYE"
     custom-model-data: 0
     cooldown: 25
+    lore:
+      - "&7Revela a los enemigos invisibles"
+      - "&7y escondidos a tu alrededor."
+      - ""
+      - "&eRadio: &f30.0 bloques"
+      - "&eDuración: &f10 segundos"
+      - "&eModo de uso: &fClick Derecho"
+      - "&eEnfriamiento: &f%cooldown%s"
     mechanics:
       radius: 30.0
       duration-seconds: 10

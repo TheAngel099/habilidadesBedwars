@@ -18,6 +18,7 @@ public class HabilidadesBedwarsPlugin extends JavaPlugin {
     private FallDamageManager fallDamageManager;
     private AbilityManager abilityManager;
     private ActiveEntityManager activeEntityManager;
+    private com.theangel099.habilidadesbedwars.hook.BedwarsCosmeticsHook cosmeticsHook;
 
     @Override
     public void onEnable() {
@@ -36,13 +37,18 @@ public class HabilidadesBedwarsPlugin extends JavaPlugin {
             this.cooldownManager = new CooldownManager(this);
             this.fallDamageManager = new FallDamageManager(this);
             this.abilityManager = new AbilityManager(this);
+            this.cosmeticsHook = new com.theangel099.habilidadesbedwars.hook.BedwarsCosmeticsHook();
             
             // 3. Registrar Listeners
             getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
+            getServer().getPluginManager().registerEvents(new com.theangel099.habilidadesbedwars.listener.MBedwarsListener(this), this);
             getServer().getPluginManager().registerEvents(this.fallDamageManager, this);
             getServer().getPluginManager().registerEvents(this.activeEntityManager, this);
             
-            // 4. Integración con MBedwars (Tienda/Addon API)
+            // 4. Registrar Comandos
+            getCommand("habilidadesbedwars").setExecutor(new com.theangel099.habilidadesbedwars.command.HabilidadesCommand(this));
+            
+            // 5. Integración con MBedwars (Tienda/Addon API)
             // Aquí irá el registro en el API de MBedwars más adelante
             
             getLogger().info("HabilidadesBedwars habilitado correctamente.");
@@ -89,5 +95,9 @@ public class HabilidadesBedwarsPlugin extends JavaPlugin {
 
     public ActiveEntityManager getActiveEntityManager() {
         return activeEntityManager;
+    }
+
+    public com.theangel099.habilidadesbedwars.hook.BedwarsCosmeticsHook getCosmeticsHook() {
+        return cosmeticsHook;
     }
 }

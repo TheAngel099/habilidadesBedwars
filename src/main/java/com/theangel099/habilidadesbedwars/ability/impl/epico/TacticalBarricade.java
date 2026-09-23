@@ -1,4 +1,4 @@
-package com.theangel099.habilidadesbedwars.ability.impl;
+package com.theangel099.habilidadesbedwars.ability.impl.epico;
 
 import com.theangel099.habilidadesbedwars.HabilidadesBedwarsPlugin;
 import com.theangel099.habilidadesbedwars.ability.Ability;
@@ -64,39 +64,57 @@ public class TacticalBarricade extends Ability {
         Location spawnLoc = playerLoc.clone().add(lookDir.clone().multiply(2.0));
         spawnLoc.setY(Math.floor(spawnLoc.getY())); // Alinear a la cuadrícula Y
 
-        List<org.bukkit.entity.Entity> spawnedEntities = new ArrayList<>();
         BlockData blockData = displayBlockMaterial.createBlockData();
-
         double halfWidthOffset = (width - 1) / 2.0;
+        
+        java.util.Map<Location, BlockData> originalBlocks = new java.util.HashMap<>();
+        
+        // Determinar a qué jugadores enviar los paquetes
+        List<Player> targetPlayers = new ArrayList<>();
+        if (com.theangel099.habilidadesbedwars.mbedwars.BedwarsIntegration.isPlayerInActiveArena(player)) {
+            de.marcely.bedwars.api.arena.Arena arena = de.marcely.bedwars.api.BedwarsAPI.getGameAPI().getArenaByPlayer(player);
+            if (arena != null) {
+                targetPlayers.addAll(arena.getPlayers());
+            }
+        }
+        if (targetPlayers.isEmpty()) {
+            // Failsafe: enviar a todos en el mundo cerca
+            for (Player p : spawnLoc.getWorld().getPlayers()) {
+                if (p.getLocation().distanceSquared(spawnLoc) < 2500) {
+                    targetPlayers.add(p);
+                }
+            }
+        }
+
+        List<org.bukkit.entity.Entity> spawnedEntities = new ArrayList<>();
 
         for (int w = 0; w < width; w++) {
             double lateralOffset = (w - halfWidthOffset);
             Location columnBaseLoc = spawnLoc.clone().add(rightDir.clone().multiply(lateralOffset));
+            
+            // Alinear al centro del bloque
+            columnBaseLoc.setX(columnBaseLoc.getBlockX() + 0.5);
+            columnBaseLoc.setZ(columnBaseLoc.getBlockZ() + 0.5);
 
-            // Generar los BlockDisplay para cada bloque de la columna
             for (int h = 0; h < height; h++) {
-                Location displayLoc = columnBaseLoc.clone().add(0, h, 0);
-
-                BlockDisplay display = (BlockDisplay) spawnLoc.getWorld().spawnEntity(displayLoc, EntityType.BLOCK_DISPLAY);
-                display.setBlock(blockData);
+                Location blockLoc = columnBaseLoc.clone().add(0, h, 0).getBlock().getLocation(); // Obtener loc exacta de bloque
                 
-                // Centrar pivote y aplicar escala completa 1x1x1
-                display.setTransformation(new Transformation(
-                        new Vector3f(-0.5f, 0, -0.5f),
-                        new AxisAngle4f(0, 0, 1, 0),
-                        new Vector3f(1, 1, 1),
-                        new AxisAngle4f(0, 0, 1, 0)
-                ));
-
-                spawnedEntities.add(display);
-                plugin.getActiveEntityManager().trackEntity(player, display);
+                // No sobreescribir bloques que ya son sólidos reales (opcional, para no romper el mapa)
+                if (blockLoc.getBlock().getType().isSolid()) continue;
+                
+                originalBlocks.put(blockLoc, blockLoc.getBlock().getBlockData());
+                
+                // Enviar paquete falso
+                for (Player p : targetPlayers) {
+                    p.sendBlockChange(blockLoc, blockData);
+                }
             }
-
-            // Generar una Interaction Entity para proveer colisión / intercepción de proyectiles
+            
+            // Re-agregar Interaction Entity para intercepción nativa de proyectiles del lado del servidor
             org.bukkit.entity.Interaction interaction = (org.bukkit.entity.Interaction) spawnLoc.getWorld().spawnEntity(columnBaseLoc, EntityType.INTERACTION);
             interaction.setInteractionWidth(1.0f);
             interaction.setInteractionHeight((float) height);
-            interaction.setResponsive(true);
+            interaction.setResponsive(true); // Hace que intercepte proyectiles nativamente
 
             spawnedEntities.add(interaction);
             plugin.getActiveEntityManager().trackEntity(player, interaction);
@@ -104,22 +122,33 @@ public class TacticalBarricade extends Ability {
         
         spawnLoc.getWorld().playSound(spawnLoc, Sound.BLOCK_ANVIL_PLACE, 1.0f, 1.0f);
 
-        // Tarea programada para eliminar las entidades y mantener la higiene del mapa
+        // Tarea para limpiar los bloques falsos y las entidades
         final org.bukkit.scheduler.BukkitTask[] taskRef = new org.bukkit.scheduler.BukkitTask[1];
+        
         taskRef[0] = new BukkitRunnable() {
             @Override
             public void run() {
+                // Eliminar Interaction Entities
                 for (org.bukkit.entity.Entity entity : spawnedEntities) {
                     plugin.getActiveEntityManager().untrackEntity(entity);
                 }
+                
+                // Restaurar bloques
+                for (java.util.Map.Entry<Location, BlockData> entry : originalBlocks.entrySet()) {
+                    for (Player p : targetPlayers) {
+                        if (p.isOnline()) {
+                            p.sendBlockChange(entry.getKey(), entry.getValue());
+                        }
+                    }
+                }
+                
                 // Efecto visual de rotura y sonido de desaparición
                 try {
                     spawnLoc.getWorld().spawnParticle(org.bukkit.Particle.BLOCK, spawnLoc.clone().add(0, 1, 0), 30, 0.5, 0.5, 0.5, blockData);
                 } catch (Exception ignored) {}
                 spawnLoc.getWorld().playSound(spawnLoc, Sound.BLOCK_GLASS_BREAK, 1.0f, 0.8f);
-                if (taskRef[0] != null) {
-                    plugin.getActiveEntityManager().untrackTask(taskRef[0]);
-                }
+                
+                plugin.getActiveEntityManager().untrackTask(taskRef[0]);
             }
         }.runTaskLater(plugin, durationSeconds * 20L);
 

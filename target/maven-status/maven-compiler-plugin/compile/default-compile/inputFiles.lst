@@ -1,10 +1,13 @@
 C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\Ability.java
 C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\AbilityCategory.java
-C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\impl\KineticDash.java
-C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\impl\RepulsorBlast.java
-C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\impl\SpectralVision.java
-C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\impl\TacticalBarricade.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\impl\comun\KineticDash.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\impl\epico\RepulsorBlast.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\impl\epico\TacticalBarricade.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\ability\impl\legendario\SpectralVision.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\command\HabilidadesCommand.java
 C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\HabilidadesBedwarsPlugin.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\hook\BedwarsCosmeticsHook.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\listener\MBedwarsListener.java
 C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\listener\PlayerInteractListener.java
 C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\manager\AbilityManager.java
 C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\manager\ActiveEntityManager.java
@@ -12,3 +15,5 @@ C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwa
 C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\manager\CooldownManager.java
 C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\manager\FallDamageManager.java
 C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\mbedwars\BedwarsIntegration.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\utils\ErrorLogger.java
+C:\Users\AlexRaton\Documents\WEB EMMA POSTRE\habilidadesBedWARS\habilidadesBedwars\src\main\java\com\theangel099\habilidadesbedwars\utils\Profiler.java
