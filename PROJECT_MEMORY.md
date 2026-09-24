@@ -1,5 +1,8 @@
 # Memoria del Proyecto: Habilidades Modernas para Bedwars
 
+## 🎯 Tarea Actual (Work in Progress)
+- [2026-09-23]: *(Escribe aquí la tarea en la que estás trabajando ahora mismo. Ej: Implementando nueva habilidad X o arreglando el bug Y. Bórralo o actualízalo al terminar)*.
+
 ## 1. Resumen y Objetivo
 Plugin en Java (Addon para "Marcely's Bedwars" v5.5.8+) que añade un catálogo de habilidades tácticas y modernas (estilo hero-shooter). Utiliza APIs contemporáneas de Minecraft (Display Entities, partículas modernas, vector de físicas, ActionBar) sin requerir mods.
 
@@ -41,27 +44,38 @@ Plugin en Java (Addon para "Marcely's Bedwars" v5.5.8+) que añade un catálogo 
 - **Auto-Deploy y Comandos:** Configuración de `maven-antrun-plugin` para copiar directamente el jar a `plugins/update/` permitiendo despliegues limpios al reiniciar. Se incluyó un comando base `/hb reload` administrado en `HabilidadesCommand` para recargar config y managers en caliente.
 - **Integración con BedwarsCosmetics (API Cruzada):** Las habilidades ahora se tratan como la categoría `ABILITY` dentro del plugin `BedwarsCosmetics`. El menú, economía (CoinsManager) y guardado (playerdata) lo gestiona *BedwarsCosmetics*. Nuestro plugin (`HabilidadesBedwars`) lee si la habilidad está equipada usando `BedwarsCosmeticsHook` antes de permitir su uso en `PlayerInteractListener`. Solo se puede equipar **1 habilidad a la vez** y **no se puede cambiar in-game**.
 
-## Decisiones de Diseño y Arquitectura (DDA)
+## 6. Decisiones de Diseño y Arquitectura (DDA)
+1. **Registro y Hooks:**
+   - `HabilidadesBedwars` se inicia después de `BedwarsCosmetics` (dependencia soft/hard).
+   - La comunicación se realiza mediante una clase `BedwarsCosmeticsHook` para verificar el estado de los cosméticos equipados.
+2. **Manejo de Ítems e Inventario:**
+   - Los ítems físicos de habilidad ahora se entregan automáticamente al jugador dentro de las arenas de MBedwars al iniciar la ronda (`RoundStartEvent`) o al reaparecer (`PlayerIngamePostRespawnEvent`).
+   - Los ítems generados contienen soporte para `lore` completamente editable desde `config.yml` (incluyendo reemplazo de variables dinámicas como `%cooldown%`).
+   - Los ítems están marcados con un Tag PDC único para distinguirlos de los ítems de Bedwars.
+3. **Higiene del Mapa y Colisiones:**
+   - Para dar colisión física sin alterar permanentemente el mapa de Bedwars (respetando la regla de higiene), las habilidades que generan muros como `TacticalBarricade` utilizan **paquetes de bloques falsos** (`sendBlockChange`) enviados a todos los jugadores de la arena.
+   - La intercepción de proyectiles (flechas, bolas de fuego) se simula del lado del servidor calculando si el proyectil intersecta las coordenadas del bloque falso y destruyéndolo si es así.
+4. **Seguridad y Restricciones:** Revisa este documento antes de proponer arquitecturas nuevas o nuevas habilidades, para asegurar que se aplican invariablemente los filtrados radiales y de equipos, y que cualquier clase nueva se maneja a través de los sistemas de Logger y Profiler establecidos.
+5. **Entorno Moderno Java 25 LTS, Paper 26.1.2 y Generational ZGC:**
+   - Todo el ecosistema de habilidades y cosméticos está compilado y optimizado estrictamente bajo Java 25 LTS y Paper 26.1.2+.
+   - **Generational ZGC:** Servidor arrancado con `-XX:+UseZGC -XX:+ZGenerational` en `blog.bat`, garantizando pausas de Garbage Collection inferiores a 1 milisegundo (< 1ms) para eliminar micro-tirones al jugar en host local.
+   - **Renderizado Cinemático:** Las Display Entities (`BlockDisplay`, `ItemDisplay`) utilizan `teleportDuration(1)` e `interpolationDuration` para animaciones fluidas a 60/144 FPS en los clientes de los jugadores.
+   - **Partículas Modernas:** Soporte pleno para partículas `GUST`, `GUST_EMITTER_LARGE`, `TRIAL_SPAWNER_DETECTION`, `SONIC_BOOM` y `DUST_COLOR_TRANSITION` con soporte de colores HEX.
+   - **Vuelo y Red Local:** `server.properties` configurado con `allow-flight=true` (evita expulsiones por falsos positivos de vuelo en dragones o dashes) y `network-compression-threshold=512` (menor sobrecarga de CPU en red local LAN).
+   - **Correcciones Post-Migración (Java 25/Paper 1.21+):** Se reemplazaron partículas como `INSTANT_EFFECT` (que requieren clases de datos específicas como `Particle$Spell`) por partículas libres de metadata (`END_ROD`, `SNOWFLAKE`) para prevenir `IllegalArgumentException`. Además, se aseguró la correcta compilación y empaquetado de clases internas anónimas (`$1.class`) mediante ejecuciones limpias de Maven (`mvn clean package`) para evitar `NoClassDefFoundError`.
 
-1.  **Registro y Hooks:**
-    *   `HabilidadesBedwars` se inicia después de `BedwarsCosmetics` (dependencia soft/hard).
-    *   La comunicación se realiza mediante una clase `BedwarsCosmeticsHook` para verificar el estado de los cosméticos equipados.
+## 7. Estructura del config.yml
+Toda nueva habilidad debe registrarse en el archivo `config.yml` respetando esta estructura base para que sea procesada correctamente:
+```yaml
+habilidades:
+  nombre_de_la_habilidad:
+    nombre: "<green>Nombre Visual"
+    cooldown: 15
+    material: FEATHER
+    # Agregar variables custom aquí según requiera la habilidad
+```
 
-2.  **Manejo de Ítems e Inventario:**
-    *   Los ítems físicos de habilidad ahora se entregan automáticamente al jugador dentro de las arenas de MBedwars al iniciar la ronda (`RoundStartEvent`) o al reaparecer (`PlayerIngamePostRespawnEvent`).
-    *   Los ítems generados contienen soporte para `lore` completamente editable desde `config.yml` (incluyendo reemplazo de variables dinámicas como `%cooldown%`).
-    *   Los ítems están marcados con un Tag PDC único para distinguirlos de los ítems de Bedwars.
-
-3.  **Higiene del Mapa y Colisiones:**
-    *   Para dar colisión física sin alterar permanentemente el mapa de Bedwars (respetando la regla de higiene), las habilidades que generan muros como `TacticalBarricade` utilizan **paquetes de bloques falsos** (`sendBlockChange`) enviados a todos los jugadores de la arena.
-    *   La intercepción de proyectiles (flechas, bolas de fuego) se simula del lado del servidor calculando si el proyectil intersecta las coordenadas del bloque falso y destruyéndolo si es así.
-
-4.  **Seguridad y Restricciones:** Revisa este documento antes de proponer arquitecturas nuevas o nuevas habilidades, para asegurar que se aplican invariablemente los filtrados radiales y de equipos, y que cualquier clase nueva se maneja a través de los sistemas de Logger y Profiler establecidos.
-
-5.  **Entorno Moderno Java 25 LTS, Paper 26.1.2 y Generational ZGC:**
-    *   Todo el ecosistema de habilidades y cosméticos está compilado y optimizado estrictamente bajo Java 25 LTS y Paper 26.1.2+.
-    *   **Generational ZGC:** Servidor arrancado con `-XX:+UseZGC -XX:+ZGenerational` en `blog.bat`, garantizando pausas de Garbage Collection inferiores a 1 milisegundo (< 1ms) para eliminar micro-tirones al jugar en host local con hermanos.
-    *   **Renderizado Cinemático:** Las Display Entities (`BlockDisplay`, `ItemDisplay`) utilizan `teleportDuration(1)` e `interpolationDuration` para animaciones fluidas a 60/144 FPS en los clientes de los jugadores.
-    *   **Partículas Modernas:** Soporte pleno para partículas `GUST`, `GUST_EMITTER_LARGE`, `TRIAL_SPAWNER_DETECTION`, `SONIC_BOOM` y `DUST_COLOR_TRANSITION` con soporte de colores HEX.
-    *   **Vuelo y Red Local:** `server.properties` configurado con `allow-flight=true` (evita expulsiones por falsos positivos de vuelo en dragones o dashes) y `network-compression-threshold=512` (menor sobrecarga de CPU en red local LAN).
-    *   **Correcciones Post-Migración (Java 25/Paper 1.21+):** Se reemplazaron partículas como `INSTANT_EFFECT` (que requieren clases de datos específicas como `Particle$Spell`) por partículas libres de metadata (`END_ROD`, `SNOWFLAKE`) para prevenir `IllegalArgumentException`. Además, se aseguró la correcta compilación y empaquetado de clases internas anónimas (`$1.class`) mediante ejecuciones limpias de Maven (`mvn clean package`) para evitar `NoClassDefFoundError`.
+## 8. Historial de Cambios Arquitectónicos
+- [2026-09-23] - [Core/Memory]: Separación del ciclo de limpieza de Cooldowns y FallDamage en `ActiveEntityManager` para prevenir exploit de recarga de habilidades tras morir (ahora se asocian estrictamente a `PlayerQuitEvent`).
+- [2026-09-23] - [Integration]: Modificación en `MBedwarsListener` para iterar el inventario y validar habilidades mediante su PDC, solucionando conflictos con compras de ítems vanilla de la tienda de Bedwars.
+- [2026-09-23] - [Geometría]: Corrección en `FrostProjectile` para aplicar fórmula radial esférica estricta (`distanceSquared`) reemplazando la colisión por BoundingBox cúbico de Bukkit.

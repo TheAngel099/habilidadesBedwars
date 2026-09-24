@@ -129,7 +129,10 @@ public class ActiveEntityManager implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        cleanupPlayer(event.getPlayer().getUniqueId());
+        UUID uuid = event.getPlayer().getUniqueId();
+        cleanupPlayer(uuid);
+        plugin.getCooldownManager().cleanupPlayer(uuid);
+        plugin.getFallDamageManager().cleanupPlayer(uuid);
     }
 
     @EventHandler

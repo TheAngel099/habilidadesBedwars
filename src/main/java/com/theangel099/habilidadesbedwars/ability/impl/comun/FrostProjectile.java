@@ -110,6 +110,10 @@ public class FrostProjectile extends Ability {
                 for (Entity entity : nearby) {
                     if (entity.equals(player) || entity.equals(iceDisplay)) continue;
                     
+                    if (entity.getLocation().distanceSquared(currentLoc) > hitRadius * hitRadius) {
+                        continue;
+                    }
+                    
                     if (entity instanceof LivingEntity target && !(target instanceof org.bukkit.entity.ArmorStand)) {
                         // Si es jugador, revisar si son enemigos usando BedwarsIntegration
                         if (target instanceof Player targetPlayer) {

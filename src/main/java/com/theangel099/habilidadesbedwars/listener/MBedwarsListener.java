@@ -42,9 +42,19 @@ public class MBedwarsListener implements Listener {
             if (plugin.getCosmeticsHook().hasAbilityEquipped(player, ability.getId())) {
                 ItemStack abilityItem = ability.createItem(1);
                 
-                // Dar el item si no lo tiene (prevención de duplicados aunque al morir se limpia)
+                // Dar el item si no lo tiene verificando por PDC (PersistentDataContainer) en lugar del Material
                 PlayerInventory inv = player.getInventory();
-                if (!inv.contains(abilityItem.getType())) {
+                boolean hasItem = false;
+                for (ItemStack item : inv.getContents()) {
+                    if (item == null) continue;
+                    Ability found = plugin.getAbilityManager().getAbilityByItem(item);
+                    if (found != null && found.getId().equals(ability.getId())) {
+                        hasItem = true;
+                        break;
+                    }
+                }
+                
+                if (!hasItem) {
                     inv.addItem(abilityItem);
                 }
                 break; // Solo puede tener una habilidad equipada, así que terminamos aquí

@@ -1,11 +1,22 @@
 # Directrices de Desarrollo del Plugin (Skill: Minecraft Moderno)
-- Entorno: Java 25+ LTS, Paper 26.1.2+ y Marcely's Bedwars API (MBedwars 5.5.8+).
-- Renderizado y Efectos: Usa estrictamente Display Entities (BlockDisplay, ItemDisplay) e Interaction Entities con interpolación fluida (teleportDuration/interpolationDuration). NUNCA uses ArmorStands invisibles para efectos visuales.
-- Interfaz de Texto: Usa Adventure API / Component para mensajes, títulos y ActionBar con soporte para colores RGB/HEX; evita ChatColor o cadenas legadas con '§'.
-- Física y Vectores: Toda habilidad y cosmético debe basarse en vectores matemáticos normalizados (org.bukkit.util.Vector) y partículas modernas (WIND_CHARGE, TRIAL_SPAWNER_DETECTION, DUST_COLOR_TRANSITION, etc.).
-- Higiene de Arena: No modifiques bloques físicos del mapa de Bedwars; usa paquetes de bloques falsos o Display Entities.
-- Ciclo de Vida: Toda tarea repetitiva (BukkitTask) debe asociarse al jugador y cancelarse inmediatamente si el jugador muere, se desconecta o la arena termina (cero fugas de memoria).
-- Regla de Nueva Creación: Toda habilidad o cosmético nuevo debe construirse estrictamente sobre Java 25 y el fork Paper 26.1.2 en adelante, optimizado para Generational ZGC (pausas < 1ms).
-- Documentación Obligatoria (Escritura): Es ESTRICTAMENTE OBLIGATORIO que cada vez que se implemente una nueva habilidad, se haga un cambio arquitectónico o una mejora significativa, el agente debe actualizar el archivo `PROJECT_MEMORY.md` para reflejar dicho cambio antes de dar por terminada la tarea.
-- Contexto Obligatorio (Lectura): Al iniciar cualquier tarea compleja, refactorización o creación de habilidad, el agente DEBE leer `PROJECT_MEMORY.md` antes de escribir código para evitar contradecir la arquitectura establecida.
-- Versionado Semántico: Cada vez que se realicen cambios, mejoras o correcciones en el código, es OBLIGATORIO incrementar la versión del proyecto en el archivo `pom.xml` (ej. de `1.0.1` a `1.0.2` para parches menores, o `1.1.0` / `1.2.0` para nuevas características) antes de compilar.
+
+## 🛠️ 1. ENTORNO Y STACK
+- **Entorno Base:** Java 25+ LTS, Paper 26.1.2+ en adelante.
+- **Dependencias Externas:** Marcely's Bedwars API (MBedwars 5.5.8+).
+- **Anti-Alucinaciones:** Si desconoces la firma exacta de un método de MBedwars, **NO LO INVENTES**. Solicita al usuario que proporcione la interfaz o documentación de esa clase antes de escribir el código.
+
+## ⚙️ 2. ESTÁNDARES DE CÓDIGO Y ARQUITECTURA
+- **Seguridad de Hilos (CRÍTICO):** Toda interacción con la API de Bukkit (generar entidades, modificar bloques, abrir inventarios) DEBE hacerse en el Hilo Principal (Main Thread). Usa tareas asíncronas ÚNICAMENTE para I/O, bases de datos o cálculos matemáticos puros, y regresa al hilo principal para aplicar los resultados.
+- **Gestión de Memoria (ZGC):** El servidor usa Generational ZGC (pausas < 1ms). Evita instanciar objetos efímeros masivamente (como `new Vector()` dentro de bucles de partículas por tick); reutiliza objetos u opta por Object Pooling en tareas de muy alta frecuencia.
+- **Higiene de Arena:** NO modifiques bloques físicos reales del mapa de Bedwars. Utiliza exclusivamente paquetes (Fake Blocks) o Display Entities para evitar corromper los mundos al reiniciar las arenas.
+- **Ciclo de Vida Estricto:** Toda tarea repetitiva (`BukkitTask`) debe estar vinculada a la sesión del jugador y **cancelarse inmediatamente** si el jugador muere, se desconecta o la partida termina. Cero tolerancia a fugas de memoria (memory leaks).
+
+## 🎨 3. RENDERIZADO Y FRONTEND
+- **Entidades Visuales:** Usa ESTRICTAMENTE Display Entities (`BlockDisplay`, `ItemDisplay`) e Interaction Entities con interpolación fluida (`teleportDuration` / `interpolationDuration`). **NUNCA** uses ArmorStands invisibles para cosméticos o hologramas.
+- **Efectos Modernos:** Toda habilidad debe basarse en vectores matemáticos normalizados (`org.bukkit.util.Vector`) y partículas modernas (ej. `WIND_CHARGE`, `TRIAL_SPAWNER_DETECTION`, `DUST_COLOR_TRANSITION`).
+- **Interfaz de Texto:** Usa EXCLUSIVAMENTE Adventure API (`Component`) para mensajes, títulos y ActionBars con soporte RGB/HEX. Está PROHIBIDO usar `ChatColor` o cadenas legadas con el símbolo `§`.
+
+## 🔄 4. FLUJO DE TRABAJO DEL AGENTE
+- **Contexto Obligatorio (Lectura):** Al iniciar CUALQUIER tarea, DEBES leer el archivo `PROJECT_MEMORY.md` antes de escribir código para asegurar que no contradices la arquitectura actual.
+- **Documentación Obligatoria (Escritura):** Antes de dar por terminada la tarea, DEBES actualizar `PROJECT_MEMORY.md` añadiendo al final el formato: `[Fecha] - [Módulo]: Breve descripción del cambio arquitectónico`.
+- **Versionado Semántico:** Es OBLIGATORIO incrementar la versión en el archivo `pom.xml` antes de compilar cada vez que apliques un cambio (ej. `1.0.1` a `1.0.2` para parches; `1.1.0` para nuevas habilidades).
