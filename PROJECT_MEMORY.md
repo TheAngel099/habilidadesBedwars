@@ -80,3 +80,4 @@ habilidades:
 - [2026-09-23] - [Integration]: Modificación en `MBedwarsListener` para iterar el inventario y validar habilidades mediante su PDC, solucionando conflictos con compras de ítems vanilla de la tienda de Bedwars.
 - [2026-09-23] - [Geometría]: Corrección en `FrostProjectile` para aplicar fórmula radial esférica estricta (`distanceSquared`) reemplazando la colisión por BoundingBox cúbico de Bukkit.
 - [2026-09-23] - [Scheduler/Folia]: Refactorización completa del sistema de tareas. Se eliminaron todas las referencias a `BukkitRunnable` y `BukkitTask` en favor de `ScheduledTask`, `player.getScheduler()` y `Bukkit.getRegionScheduler()`, logrando que el plugin sea 100% compatible con Folia.
+- [2026-09-23] - [Configuración]: Se rediseñó el sistema de carga de configuración de habilidades. Ahora cada habilidad posee un archivo `.yml` individual dentro de la carpeta `plugins/HabilidadesBedwars/habilidades/` en vez de saturar el `config.yml` principal.

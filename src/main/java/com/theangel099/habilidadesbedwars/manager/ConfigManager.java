@@ -36,8 +36,5 @@ public class ConfigManager {
         return config.getString("settings.messages." + path, "&cMessage not found: " + path);
     }
     
-    public boolean isAbilityEnabled(String abilityId) {
-        return config.getBoolean("abilities." + abilityId + ".enabled", false);
-    }
 }
 

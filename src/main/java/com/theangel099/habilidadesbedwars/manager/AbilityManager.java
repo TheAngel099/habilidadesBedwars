@@ -6,6 +6,7 @@ import com.theangel099.habilidadesbedwars.ability.impl.comun.KineticDash;
 import com.theangel099.habilidadesbedwars.ability.impl.epico.RepulsorBlast;
 import com.theangel099.habilidadesbedwars.ability.impl.epico.TacticalBarricade;
 import com.theangel099.habilidadesbedwars.ability.impl.legendario.SpectralVision;
+import com.theangel099.habilidadesbedwars.ability.impl.legendario.GravitySingularity;
 import org.bukkit.Material;
 
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class AbilityManager {
 
             // Legendarias
             registerAbility(new SpectralVision(plugin));
+            registerAbility(new GravitySingularity(plugin));
 
             plugin.getLogger().info("Habilidades cargadas exitosamente: " + abilitiesById.size());
         } catch (Exception e) {
@@ -50,7 +52,7 @@ public class AbilityManager {
 
     private void registerAbility(Ability ability) {
         ability.loadConfig(); // Inicializa variables como itemMaterial y config custom
-        if (plugin.getConfigManager().isAbilityEnabled(ability.getId())) {
+        if (ability.isEnabled()) {
             abilitiesById.put(ability.getId(), ability);
             abilitiesByMaterial.put(ability.getItemMaterial(), ability);
         }

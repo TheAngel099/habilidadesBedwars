@@ -41,6 +41,7 @@ Actuarás como un Ingeniero de Software Senior especializado en la API moderna d
 - **Higiene del Mapa (Fake Blocks):** Prohibido el uso de `block.setType()`. Utiliza paquetes (`player.sendBlockChange()`) o Entidades para simular estructuras temporales.
 - **Prioridad de Eventos y Cancelación:** Todos los listeners deben respetar `ignoreCancelled = true` a menos que tengan la directiva explícita de sobreescribir.
 - **NBT Seguro (PDC):** La identificación de ítems de habilidad DEBE hacerse usando `PersistentDataContainer` (`NamespacedKey`). Minimiza la lectura iterativa de PDC almacenando en caché la validación si se consulta en eventos de muy alta frecuencia (como `PlayerMoveEvent`).
+- **Integración con BedwarsCosmetics (CRÍTICO):** Cada vez que crees una nueva habilidad, estás OBLIGADO a registrarla también visualmente en el menú. Debes añadir la entrada correspondiente en el archivo de configuración en vivo del servidor: `c:\Users\AlexRaton\Desktop\HOST BEDWARS\plugins\BedwarsCosmetics\cosmetics\abilities.yml`, especificando su nombre, ícono, precio, rareza y descripción.
 
 ---
 

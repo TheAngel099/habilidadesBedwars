@@ -53,7 +53,8 @@ public class FrostProjectile extends Ability {
     @Override
     public boolean cast(Player player) {
         Location startLoc = player.getEyeLocation();
-        Vector direction = startLoc.getDirection().normalize();
+        Vector velocity = startLoc.getDirection().normalize().multiply(projectileSpeed);
+        double hitRadiusSq = hitRadius * hitRadius;
         
         player.getWorld().playSound(startLoc, Sound.ENTITY_SNOWBALL_THROW, 1.0f, 0.5f);
 
@@ -87,7 +88,7 @@ public class FrostProjectile extends Ability {
                 }
 
                 // Mover el proyectil vectorialmente
-                currentLoc.add(direction.clone().multiply(projectileSpeed));
+                currentLoc.add(velocity);
                 distanceTraveled += projectileSpeed;
 
                 // Actualizar la posición visual suavemente (interpolación de 1 tick)
@@ -110,7 +111,7 @@ public class FrostProjectile extends Ability {
                 for (Entity entity : nearby) {
                     if (entity.equals(player) || entity.equals(iceDisplay)) continue;
                     
-                    if (entity.getLocation().distanceSquared(currentLoc) > hitRadius * hitRadius) {
+                    if (entity.getLocation().distanceSquared(currentLoc) > hitRadiusSq) {
                         continue;
                     }
                     

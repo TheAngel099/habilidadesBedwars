@@ -24,13 +24,24 @@ public class MBedwarsListener implements Listener {
     public void onRoundStart(RoundStartEvent event) {
         Collection<Player> players = event.getArena().getPlayers();
         for (Player player : players) {
-            giveEquippedAbility(player);
+            player.getScheduler().runDelayed(plugin, task -> {
+                if (player.isOnline()) {
+                    giveEquippedAbility(player);
+                    player.updateInventory();
+                }
+            }, null, 2L);
         }
     }
 
     @EventHandler
     public void onPlayerRespawn(PlayerIngamePostRespawnEvent event) {
-        giveEquippedAbility(event.getPlayer());
+        Player player = event.getPlayer();
+        player.getScheduler().runDelayed(plugin, task -> {
+            if (player.isOnline()) {
+                giveEquippedAbility(player);
+                player.updateInventory();
+            }
+        }, null, 2L);
     }
 
     private void giveEquippedAbility(Player player) {

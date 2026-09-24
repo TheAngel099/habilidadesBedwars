@@ -10,6 +10,7 @@ public abstract class Ability {
     protected final HabilidadesBedwarsPlugin plugin;
     protected final String id;
     
+    protected boolean enabled;
     protected String name;
     protected AbilityCategory category;
     protected Material itemMaterial;
@@ -25,28 +26,51 @@ public abstract class Ability {
     }
 
     /**
-     * Carga o recarga la configuración específica de esta habilidad.
+     * Carga o recarga la configuración específica de esta habilidad desde su propio archivo.
      */
     public void loadConfig() {
-        ConfigurationSection section = plugin.getConfig().getConfigurationSection("abilities." + id);
-        if (section != null) {
-            this.name = section.getString("name", id);
-            try {
-                this.category = AbilityCategory.valueOf(section.getString("category", "COMUN").toUpperCase());
-            } catch (IllegalArgumentException e) {
-                this.category = AbilityCategory.COMUN;
-            }
-            String matName = section.getString("item", "STONE");
-            if (matName == null) matName = "STONE";
-            Material mat = Material.getMaterial(matName.toUpperCase());
-            this.itemMaterial = (mat != null) ? mat : Material.STONE;
-            this.cooldown = section.getInt("cooldown", 10);
-            this.customModelData = section.getInt("custom-model-data", 0);
-            this.lore = section.getStringList("lore");
-            
-            // Permitir que las subclases carguen mecánicas personalizadas
-            loadMechanics(section.getConfigurationSection("mechanics"));
+        java.io.File dir = new java.io.File(plugin.getDataFolder(), "habilidades");
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
+        java.io.File file = new java.io.File(dir, id + ".yml");
+        org.bukkit.configuration.file.YamlConfiguration section = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(file);
+        
+        if (!file.exists()) {
+            section.set("enabled", true);
+            section.set("name", "<bold><gradient:#00bfff:#8a2be2>" + id + "</gradient></bold>");
+            section.set("category", "COMUN");
+            section.set("item", "FEATHER");
+            section.set("cooldown", 15);
+            section.set("custom-model-data", 0);
+            section.set("lore", java.util.Arrays.asList("<gray>Habilidad base.", "<yellow>Cooldown: %cooldown%s"));
+            try {
+                section.save(file);
+            } catch (java.io.IOException e) {
+                plugin.getLogger().warning("No se pudo crear el archivo para " + id);
+            }
+        }
+
+        this.enabled = section.getBoolean("enabled", true);
+        this.name = section.getString("name", id);
+        try {
+            this.category = AbilityCategory.valueOf(section.getString("category", "COMUN").toUpperCase());
+        } catch (IllegalArgumentException e) {
+            this.category = AbilityCategory.COMUN;
+        }
+        String matName = section.getString("item", "STONE");
+        if (matName == null) matName = "STONE";
+        Material mat = Material.getMaterial(matName.toUpperCase());
+        this.itemMaterial = (mat != null) ? mat : Material.STONE;
+        this.cooldown = section.getInt("cooldown", 10);
+        this.customModelData = section.getInt("custom-model-data", 0);
+        this.lore = section.getStringList("lore");
+        
+        // Permitir que las subclases carguen mecánicas personalizadas
+        loadMechanics(section.getConfigurationSection("mechanics"));
+        
+        // Autoguardado para asegurar que si se agregaron mechanics por código, se reflejen (opcional)
+        // pero preferible no reescribir si ya existe para preservar comentarios.
     }
 
     /**
@@ -57,14 +81,23 @@ public abstract class Ability {
         org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             // Adventure API para nombre
-            net.kyori.adventure.text.Component displayName = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(this.name);
+            net.kyori.adventure.text.Component displayName;
+            if (this.name.contains("&") || this.name.contains("§")) {
+                displayName = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(this.name);
+            } else {
+                displayName = net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(this.name);
+            }
             meta.displayName(displayName);
             
             if (this.lore != null && !this.lore.isEmpty()) {
                 java.util.List<net.kyori.adventure.text.Component> loreComponents = new java.util.ArrayList<>();
                 for (String line : this.lore) {
                     String parsedLine = line.replace("%cooldown%", String.valueOf(this.cooldown));
-                    loreComponents.add(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(parsedLine));
+                    if (parsedLine.contains("&") || parsedLine.contains("§")) {
+                        loreComponents.add(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(parsedLine));
+                    } else {
+                        loreComponents.add(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(parsedLine));
+                    }
                 }
                 meta.lore(loreComponents);
             }
@@ -104,6 +137,7 @@ public abstract class Ability {
     public abstract boolean cast(Player player);
 
     // Getters
+    public boolean isEnabled() { return enabled; }
     public String getId() { return id; }
     public String getName() { return name; }
     public AbilityCategory getCategory() { return category; }
