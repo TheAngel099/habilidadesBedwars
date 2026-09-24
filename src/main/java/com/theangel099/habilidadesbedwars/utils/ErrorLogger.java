@@ -29,7 +29,7 @@ public class ErrorLogger {
             try (PrintWriter writer = new PrintWriter(new FileWriter(errorFile, true))) {
                 writer.println("=========================================");
                 writer.println("FECHA: " + DATE_FORMAT.format(new Date()));
-                writer.println("VERSIÓN PLUGIN: " + plugin.getDescription().getVersion());
+                writer.println("VERSIÓN PLUGIN: " + plugin.getPluginMeta().getVersion());
                 writer.println("HABILIDAD: " + abilityId);
                 writer.println("ERROR: " + exception.getMessage());
                 writer.println("STACKTRACE:");
@@ -54,7 +54,7 @@ public class ErrorLogger {
             try (PrintWriter writer = new PrintWriter(new FileWriter(errorFile, true))) {
                 writer.println("=========================================");
                 writer.println("FECHA: " + DATE_FORMAT.format(new Date()));
-                writer.println("VERSIÓN PLUGIN: " + plugin.getDescription().getVersion());
+                writer.println("VERSIÓN PLUGIN: " + plugin.getPluginMeta().getVersion());
                 writer.println("CONTEXTO: " + context);
                 writer.println("ERROR: " + exception.getMessage());
                 writer.println("STACKTRACE:");
