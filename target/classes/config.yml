@@ -42,6 +42,27 @@ abilities:
       particle-count: 20
       sound-pitch: 1.0
 
+  frost_projectile:
+    enabled: true
+    name: "&bFrost Projectile"
+    category: "COMUN"
+    item: "ICE"
+    custom-model-data: 0
+    cooldown: 20
+    lore:
+      - "&7Dispara un proyectil de hielo"
+      - "&7que aplica Lentitud II al impactar."
+      - ""
+      - "&eDuración: &f5 segundos"
+      - "&eModo de uso: &fClick Derecho"
+      - "&eEnfriamiento: &f%cooldown%s"
+    mechanics:
+      slowness-duration: 5
+      slowness-amplifier: 1
+      speed: 1.5
+      max-distance: 50.0
+      hit-radius: 1.5
+
   tactical_barricade:
     enabled: true
     name: "&6Tactical Barricade"

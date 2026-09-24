@@ -61,10 +61,11 @@ public class FrostProjectile extends Ability {
         ItemDisplay iceDisplay = player.getWorld().spawn(startLoc, ItemDisplay.class, display -> {
             display.setItemStack(new ItemStack(Material.ICE));
             display.setBillboard(ItemDisplay.Billboard.CENTER);
+            display.setTeleportDuration(1); // Interpolación fluida a los FPS del cliente
             
-            // Hacerlo un poco más pequeño
+            // Escala del fragmento de hielo
             Transformation transform = display.getTransformation();
-            transform.getScale().set(0.5f, 0.5f, 0.5f);
+            transform.getScale().set(0.6f, 0.6f, 0.6f);
             display.setTransformation(transform);
         });
 
@@ -85,16 +86,17 @@ public class FrostProjectile extends Ability {
                     return;
                 }
 
-                // Mover el proyectil
+                // Mover el proyectil vectorialmente
                 currentLoc.add(direction.clone().multiply(projectileSpeed));
                 distanceTraveled += projectileSpeed;
 
                 // Actualizar la posición visual suavemente (interpolación de 1 tick)
                 iceDisplay.teleport(currentLoc);
-                iceDisplay.setTeleportDuration(1); // 1 tick de interpolación para movimiento ultra suave
+                iceDisplay.setTeleportDuration(1);
 
-                // Efectos de partículas de rastro
-                currentLoc.getWorld().spawnParticle(Particle.SNOWFLAKE, currentLoc, 5, 0.2, 0.2, 0.2, 0.01);
+                // Efectos de partículas modernas de rastro (nieve + chispas de hielo)
+                currentLoc.getWorld().spawnParticle(Particle.SNOWFLAKE, currentLoc, 4, 0.15, 0.15, 0.15, 0.01);
+                currentLoc.getWorld().spawnParticle(Particle.END_ROD, currentLoc, 1, 0.05, 0.05, 0.05, 0.0);
                 
                 // Colisión con bloques
                 if (currentLoc.getBlock().getType().isSolid()) {
@@ -103,18 +105,14 @@ public class FrostProjectile extends Ability {
                     return;
                 }
 
-                // Colisión con entidades (Matemáticas vectoriales/Hitbox simple)
+                // Colisión con entidades (Matemáticas vectoriales con Pattern Matching Java 25)
                 Collection<Entity> nearby = currentLoc.getWorld().getNearbyEntities(currentLoc, hitRadius, hitRadius, hitRadius);
                 for (Entity entity : nearby) {
                     if (entity.equals(player) || entity.equals(iceDisplay)) continue;
                     
-                    if (entity instanceof LivingEntity && !(entity instanceof org.bukkit.entity.ArmorStand)) {
-                        LivingEntity target = (LivingEntity) entity;
-                        
+                    if (entity instanceof LivingEntity target && !(target instanceof org.bukkit.entity.ArmorStand)) {
                         // Si es jugador, revisar si son enemigos usando BedwarsIntegration
-                        if (target instanceof Player) {
-                            Player targetPlayer = (Player) target;
-                            // Check si está en modo espectador
+                        if (target instanceof Player targetPlayer) {
                             if (targetPlayer.getGameMode() == org.bukkit.GameMode.SPECTATOR) continue;
                             
                             if (BedwarsIntegration.isPlayerInActiveArena(player) && 
@@ -125,7 +123,7 @@ public class FrostProjectile extends Ability {
                             }
                         }
 
-                        // ¡Impacto!
+                        // ¡Impacto congelante!
                         target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, slownessDuration, slownessAmplifier));
                         
                         // Efectos de impacto

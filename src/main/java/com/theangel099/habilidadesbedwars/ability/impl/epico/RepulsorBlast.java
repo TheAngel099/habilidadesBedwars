@@ -42,15 +42,28 @@ public class RepulsorBlast extends Ability {
     public boolean cast(Player player) {
         Location loc = player.getLocation();
         
-        // Reproducir partículas de onda expansiva modernas
+        // Reproducir partículas de onda expansiva modernas con geometría circular matemática
         try {
             loc.getWorld().spawnParticle(Particle.SONIC_BOOM, loc.clone().add(0, 1, 0), 1);
-            loc.getWorld().spawnParticle(Particle.TRIAL_SPAWNER_DETECTION, loc.clone().add(0, 0.5, 0), particleCount, radius / 2, 0.3, radius / 2, 0.1);
+            loc.getWorld().spawnParticle(Particle.GUST_EMITTER_LARGE, loc.clone().add(0, 0.8, 0), 1);
+            
+            // Anillo sónico horizontal con vectores normalizados
+            int ringPoints = 32;
+            for (int i = 0; i < ringPoints; i++) {
+                double angle = (2 * Math.PI * i) / ringPoints;
+                double x = Math.cos(angle) * (radius * 0.7);
+                double z = Math.sin(angle) * (radius * 0.7);
+                Location particleLoc = loc.clone().add(x, 0.5, z);
+                loc.getWorld().spawnParticle(Particle.TRIAL_SPAWNER_DETECTION, particleLoc, 1, 0, 0, 0, 0);
+            }
+            
+            loc.getWorld().spawnParticle(Particle.GUST, loc.clone().add(0, 0.5, 0), particleCount, radius / 3, 0.3, radius / 3, 0.08);
         } catch (Exception e) {
             loc.getWorld().spawnParticle(Particle.CLOUD, loc.clone().add(0, 0.5, 0), particleCount, radius / 2, 0.2, radius / 2, 0.2);
         }
         
-        loc.getWorld().playSound(loc, Sound.ENTITY_WARDEN_SONIC_BOOM, 1.0f, 1.0f);
+        loc.getWorld().playSound(loc, Sound.ENTITY_WARDEN_SONIC_BOOM, 1.0f, 1.1f);
+        loc.getWorld().playSound(loc, Sound.ENTITY_WIND_CHARGE_WIND_BURST, 1.2f, 0.8f);
 
         // Obtener entidades cercanas
         List<Entity> nearbyEntities = player.getNearbyEntities(radius, radius, radius);
