@@ -1,7 +1,7 @@
 # Memoria del Proyecto: Habilidades Modernas para Bedwars
 
 ## 🎯 Tarea Actual (Work in Progress)
-- [2026-09-23]: *(Escribe aquí la tarea en la que estás trabajando ahora mismo. Ej: Implementando nueva habilidad X o arreglando el bug Y. Bórralo o actualízalo al terminar)*.
+- [2026-09-23]: Migración masiva de todo el ecosistema de habilidades a la API de programación concurrente de Paper (Folia-Ready), eliminando BukkitRunnables.
 
 ## 1. Resumen y Objetivo
 Plugin en Java (Addon para "Marcely's Bedwars" v5.5.8+) que añade un catálogo de habilidades tácticas y modernas (estilo hero-shooter). Utiliza APIs contemporáneas de Minecraft (Display Entities, partículas modernas, vector de físicas, ActionBar) sin requerir mods.
@@ -79,3 +79,4 @@ habilidades:
 - [2026-09-23] - [Core/Memory]: Separación del ciclo de limpieza de Cooldowns y FallDamage en `ActiveEntityManager` para prevenir exploit de recarga de habilidades tras morir (ahora se asocian estrictamente a `PlayerQuitEvent`).
 - [2026-09-23] - [Integration]: Modificación en `MBedwarsListener` para iterar el inventario y validar habilidades mediante su PDC, solucionando conflictos con compras de ítems vanilla de la tienda de Bedwars.
 - [2026-09-23] - [Geometría]: Corrección en `FrostProjectile` para aplicar fórmula radial esférica estricta (`distanceSquared`) reemplazando la colisión por BoundingBox cúbico de Bukkit.
+- [2026-09-23] - [Scheduler/Folia]: Refactorización completa del sistema de tareas. Se eliminaron todas las referencias a `BukkitRunnable` y `BukkitTask` en favor de `ScheduledTask`, `player.getScheduler()` y `Bukkit.getRegionScheduler()`, logrando que el plugin sea 100% compatible con Folia.

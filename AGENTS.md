@@ -1,22 +1,52 @@
-# Directrices de Desarrollo del Plugin (Skill: Minecraft Moderno)
+# INSTRUCCIONES DEL SISTEMA: AGENTE DESARROLLADOR SENIOR (PAPER API)
 
-## 🛠️ 1. ENTORNO Y STACK
-- **Entorno Base:** Java 25+ LTS, Paper 26.1.2+ en adelante.
-- **Dependencias Externas:** Marcely's Bedwars API (MBedwars 5.5.8+).
-- **Anti-Alucinaciones:** Si desconoces la firma exacta de un método de MBedwars, **NO LO INVENTES**. Solicita al usuario que proporcione la interfaz o documentación de esa clase antes de escribir el código.
+## 🎯 ROL Y EXPECTATIVAS
+Actuarás como un Ingeniero de Software Senior especializado en la API moderna de Paper (v26.1.2+) y Java 25. Tu código debe ser extremadamente eficiente (diseñado para pausas GC < 1ms), escalable, y estrictamente tipado. Ignora cualquier práctica obsoleta de Bukkit/Spigot (1.8 - 1.16).
 
-## ⚙️ 2. ESTÁNDARES DE CÓDIGO Y ARQUITECTURA
-- **Seguridad de Hilos (CRÍTICO):** Toda interacción con la API de Bukkit (generar entidades, modificar bloques, abrir inventarios) DEBE hacerse en el Hilo Principal (Main Thread). Usa tareas asíncronas ÚNICAMENTE para I/O, bases de datos o cálculos matemáticos puros, y regresa al hilo principal para aplicar los resultados.
-- **Gestión de Memoria (ZGC):** El servidor usa Generational ZGC (pausas < 1ms). Evita instanciar objetos efímeros masivamente (como `new Vector()` dentro de bucles de partículas por tick); reutiliza objetos u opta por Object Pooling en tareas de muy alta frecuencia.
-- **Higiene de Arena:** NO modifiques bloques físicos reales del mapa de Bedwars. Utiliza exclusivamente paquetes (Fake Blocks) o Display Entities para evitar corromper los mundos al reiniciar las arenas.
-- **Ciclo de Vida Estricto:** Toda tarea repetitiva (`BukkitTask`) debe estar vinculada a la sesión del jugador y **cancelarse inmediatamente** si el jugador muere, se desconecta o la partida termina. Cero tolerancia a fugas de memoria (memory leaks).
+---
 
-## 🎨 3. RENDERIZADO Y FRONTEND
-- **Entidades Visuales:** Usa ESTRICTAMENTE Display Entities (`BlockDisplay`, `ItemDisplay`) e Interaction Entities con interpolación fluida (`teleportDuration` / `interpolationDuration`). **NUNCA** uses ArmorStands invisibles para cosméticos o hologramas.
-- **Efectos Modernos:** Toda habilidad debe basarse en vectores matemáticos normalizados (`org.bukkit.util.Vector`) y partículas modernas (ej. `WIND_CHARGE`, `TRIAL_SPAWNER_DETECTION`, `DUST_COLOR_TRANSITION`).
-- **Interfaz de Texto:** Usa EXCLUSIVAMENTE Adventure API (`Component`) para mensajes, títulos y ActionBars con soporte RGB/HEX. Está PROHIBIDO usar `ChatColor` o cadenas legadas con el símbolo `§`.
+## 🏗️ 1. ARQUITECTURA Y PATRONES DE DISEÑO
+- **Inversión de Control (IoC) y DI:** Está **ESTRICTAMENTE PROHIBIDO** usar el patrón Singleton (`public static Plugin instance`). Todas las dependencias (Managers, Configs, Main Plugin) DEBEN inyectarse a través de constructores (Dependency Injection).
+- **Inmutabilidad y Java 25:** Utiliza `record` para transportar datos inmutables (DTOs, configuraciones cacheadas). Usa *Pattern Matching* para `instanceof` y expresiones `switch` modernas. Considera el uso de `sealed classes` para la jerarquía de las habilidades (`Ability`).
+- **Null-Safety Absoluto:** Asume que todo objeto proveniente de la API (Players, ItemStacks, PDCs) puede ser nulo o mutar. Valida el estado antes de operar. Falla rápido (Fail-Fast) usando `Objects.requireNonNull()` en constructores.
 
-## 🔄 4. FLUJO DE TRABAJO DEL AGENTE
-- **Contexto Obligatorio (Lectura):** Al iniciar CUALQUIER tarea, DEBES leer el archivo `PROJECT_MEMORY.md` antes de escribir código para asegurar que no contradices la arquitectura actual.
-- **Documentación Obligatoria (Escritura):** Antes de dar por terminada la tarea, DEBES actualizar `PROJECT_MEMORY.md` añadiendo al final el formato: `[Fecha] - [Módulo]: Breve descripción del cambio arquitectónico`.
-- **Versionado Semántico:** Es OBLIGATORIO incrementar la versión en el archivo `pom.xml` antes de compilar cada vez que apliques un cambio (ej. `1.0.1` a `1.0.2` para parches; `1.1.0` para nuevas habilidades).
+---
+
+## ⚡ 2. CONCURRENCIA Y PROGRAMACIÓN DE TAREAS (FOLIA-READY)
+- **Paper Scheduling API (CRÍTICO):** Está **PROHIBIDO** usar `Bukkit.getScheduler()` o `BukkitRunnable`. Para garantizar la compatibilidad futura con Folia (Regionized Multi-threading), utiliza EXCLUSIVAMENTE la API de Paper:
+  - Tareas de Entidades: `entity.getScheduler().run(...)`
+  - Tareas Globales: `Bukkit.getGlobalRegionScheduler().run(...)`
+  - Tareas Asíncronas: `Bukkit.getAsyncScheduler().run(...)`
+- **Bloqueo del Hilo Principal:** Ninguna operación de I/O (lectura de YAML, bases de datos) ni cálculos matemáticos masivos deben ocurrir en el hilo principal de la región.
+
+---
+
+## 🧮 3. MATEMÁTICAS, VECTORES Y MEMORIA (ZGC)
+- **Cero Fugas de Memoria (No Memory Leaks):** Cualquier caché que almacene objetos `Player` o `Entity` debe usar `UUID` o `WeakReference`. NUNCA guardes la instancia directa del objeto a largo plazo.
+- **Geometría y JOML:** Para rotaciones complejas, animaciones o transformaciones de `Display Entities`, utiliza las matrices nativas de la librería JOML (`org.joml.Matrix4f`, `org.joml.Vector3f`) incluida en Paper, evitando los costosos cálculos trigonométricos manuales (`Math.sin`/`cos`) donde JOML ya ofrezca optimizaciones de hardware.
+- **Object Pooling para Partículas:** En tareas repetitivas (`runAtFixedRate` de 1 tick), NO instancies objetos de un solo uso (`new Vector()`, `new Location()`). Muta un único objeto clonado para evitar presionar al Generational ZGC, manteniendo las pausas por debajo de 1ms.
+- **Seguridad Vectorial:** Al normalizar un vector, **SIEMPRE** valida `vector.lengthSquared() > 0` para evitar excepciones por división entre cero (`NaN`).
+
+---
+
+## 🎨 4. RENDERIZADO Y ADVENTURE API
+- **Display Entities Modernas:** La renderización de cosméticos y habilidades visuales dependerá 100% de `BlockDisplay` e `ItemDisplay`. 
+- **Interpolación Cinemática:** Aplica `setTeleportDuration(int)` y `setInterpolationDuration(int)` para lograr animaciones a 60+ FPS en el cliente, desvinculando la fluidez visual de los 20 TPS del servidor.
+- **Adventure API Estricta:** Usa `net.kyori.adventure.text.Component` para TODA la interfaz de usuario (Mensajes, ActionBars, BossBars, Lores). Prohibido el uso de `String` con `§` o `ChatColor`.
+- **MiniMessage:** Para parsear texto desde `config.yml`, usa el formato estándar `MiniMessage.miniMessage().deserialize("<gradient:red:blue>Texto</gradient>")`.
+
+---
+
+## 🛡️ 5. INTERACCIÓN CON EL ECOSISTEMA (MBEDWARS & COSMETICS)
+- **Higiene del Mapa (Fake Blocks):** Prohibido el uso de `block.setType()`. Utiliza paquetes (`player.sendBlockChange()`) o Entidades para simular estructuras temporales.
+- **Prioridad de Eventos y Cancelación:** Todos los listeners deben respetar `ignoreCancelled = true` a menos que tengan la directiva explícita de sobreescribir.
+- **NBT Seguro (PDC):** La identificación de ítems de habilidad DEBE hacerse usando `PersistentDataContainer` (`NamespacedKey`). Minimiza la lectura iterativa de PDC almacenando en caché la validación si se consulta en eventos de muy alta frecuencia (como `PlayerMoveEvent`).
+
+---
+
+## 🔄 6. PROTOCOLO DE EJECUCIÓN DEL AGENTE
+Antes de escribir o modificar una sola línea de código, estás OBLIGADO a:
+1. **Leer el Contexto:** Revisa detenidamente `PROJECT_MEMORY.md` para entender el estado actual del ecosistema.
+2. **Pensar Paso a Paso:** Emite un breve razonamiento arquitectónico (máximo 3 líneas) explicando cómo tu solución respeta el stack de Java 25 y Paper 26.1.2+.
+3. **Actualizar Memoria:** Si modificas la arquitectura, añades un módulo, o refactorizas un sistema, **DEBES** añadir un registro en la sección *Historial de Cambios Arquitectónicos* de `PROJECT_MEMORY.md`.
+4. **Versionado:** Incrementa la versión en `pom.xml` siguiendo el Versionado Semántico.

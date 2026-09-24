@@ -10,7 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.AxisAngle4f;
@@ -123,34 +123,31 @@ public class TacticalBarricade extends Ability {
         spawnLoc.getWorld().playSound(spawnLoc, Sound.BLOCK_ANVIL_PLACE, 1.0f, 1.0f);
 
         // Tarea para limpiar los bloques falsos y las entidades
-        final org.bukkit.scheduler.BukkitTask[] taskRef = new org.bukkit.scheduler.BukkitTask[1];
+        final ScheduledTask[] taskRef = new ScheduledTask[1];
         
-        taskRef[0] = new BukkitRunnable() {
-            @Override
-            public void run() {
-                // Eliminar Interaction Entities
-                for (org.bukkit.entity.Entity entity : spawnedEntities) {
-                    plugin.getActiveEntityManager().untrackEntity(entity);
-                }
-                
-                // Restaurar bloques
-                for (java.util.Map.Entry<Location, BlockData> entry : originalBlocks.entrySet()) {
-                    for (Player p : targetPlayers) {
-                        if (p.isOnline()) {
-                            p.sendBlockChange(entry.getKey(), entry.getValue());
-                        }
+        taskRef[0] = org.bukkit.Bukkit.getRegionScheduler().runDelayed(plugin, spawnLoc, t -> {
+            // Eliminar Interaction Entities
+            for (org.bukkit.entity.Entity entity : spawnedEntities) {
+                plugin.getActiveEntityManager().untrackEntity(entity);
+            }
+            
+            // Restaurar bloques
+            for (java.util.Map.Entry<Location, BlockData> entry : originalBlocks.entrySet()) {
+                for (Player p : targetPlayers) {
+                    if (p.isOnline()) {
+                        p.sendBlockChange(entry.getKey(), entry.getValue());
                     }
                 }
-                
-                // Efecto visual de rotura y sonido de desaparición
-                try {
-                    spawnLoc.getWorld().spawnParticle(org.bukkit.Particle.BLOCK, spawnLoc.clone().add(0, 1, 0), 30, 0.5, 0.5, 0.5, blockData);
-                } catch (Exception ignored) {}
-                spawnLoc.getWorld().playSound(spawnLoc, Sound.BLOCK_GLASS_BREAK, 1.0f, 0.8f);
-                
-                plugin.getActiveEntityManager().untrackTask(taskRef[0]);
             }
-        }.runTaskLater(plugin, durationSeconds * 20L);
+            
+            // Efecto visual de rotura y sonido de desaparición
+            try {
+                spawnLoc.getWorld().spawnParticle(org.bukkit.Particle.BLOCK, spawnLoc.clone().add(0, 1, 0), 30, 0.5, 0.5, 0.5, blockData);
+            } catch (Exception ignored) {}
+            spawnLoc.getWorld().playSound(spawnLoc, Sound.BLOCK_GLASS_BREAK, 1.0f, 0.8f);
+            
+            plugin.getActiveEntityManager().untrackTask(taskRef[0]);
+        }, durationSeconds * 20L);
 
         plugin.getActiveEntityManager().trackTask(player, taskRef[0]);
 

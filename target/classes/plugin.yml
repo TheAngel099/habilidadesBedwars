@@ -1,5 +1,5 @@
 name: HabilidadesBedwars
-version: '1.2.2-SNAPSHOT'
+version: '1.2.3-SNAPSHOT'
 main: com.theangel099.habilidadesbedwars.HabilidadesBedwarsPlugin
 api-version: '1.21'
 authors: [TheAngel099]

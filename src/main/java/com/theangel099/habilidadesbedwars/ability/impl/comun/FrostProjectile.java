@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 
@@ -72,17 +72,17 @@ public class FrostProjectile extends Ability {
         plugin.getActiveEntityManager().trackEntity(player, iceDisplay);
 
         // Loop principal del proyectil
-        new BukkitRunnable() {
+        ScheduledTask task = iceDisplay.getScheduler().runAtFixedRate(plugin, new java.util.function.Consumer<ScheduledTask>() {
             private final Location currentLoc = startLoc.clone();
             private double distanceTraveled = 0.0;
 
             @Override
-            public void run() {
+            public void accept(ScheduledTask t) {
                 // Verificar si se canceló por alguna razón o superó la distancia máxima
                 if (!iceDisplay.isValid() || distanceTraveled > maxDistance) {
                     iceDisplay.remove();
                     plugin.getActiveEntityManager().untrackEntity(iceDisplay);
-                    this.cancel();
+                    t.cancel();
                     return;
                 }
 
@@ -101,7 +101,7 @@ public class FrostProjectile extends Ability {
                 // Colisión con bloques
                 if (currentLoc.getBlock().getType().isSolid()) {
                     shatter(currentLoc);
-                    this.cancel();
+                    t.cancel();
                     return;
                 }
 
@@ -135,7 +135,7 @@ public class FrostProjectile extends Ability {
                         target.getWorld().playSound(target.getLocation(), Sound.ENTITY_PLAYER_HURT_FREEZE, 1.0f, 1.0f);
                         
                         shatter(currentLoc);
-                        this.cancel();
+                        t.cancel();
                         return;
                     }
                 }
@@ -148,7 +148,9 @@ public class FrostProjectile extends Ability {
                 loc.getWorld().playSound(loc, Sound.BLOCK_GLASS_BREAK, 0.8f, 0.8f);
             }
 
-        }.runTaskTimer(plugin, 1L, 1L); // Correr cada tick
+        }, null, 1L, 1L); // Correr cada tick
+
+        plugin.getActiveEntityManager().trackTask(player, task);
 
         return true;
     }

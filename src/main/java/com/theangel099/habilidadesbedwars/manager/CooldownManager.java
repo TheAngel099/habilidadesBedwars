@@ -5,6 +5,7 @@ import com.theangel099.habilidadesbedwars.ability.Ability;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,7 @@ public class CooldownManager {
     private final HabilidadesBedwarsPlugin plugin;
     // Map<PlayerUUID, Map<AbilityID, ExpirationTimeMillis>>
     private final Map<UUID, Map<String, Long>> cooldowns = new HashMap<>();
-    private final Map<UUID, Map<String, org.bukkit.scheduler.BukkitTask>> cooldownTasks = new HashMap<>();
+    private final Map<UUID, Map<String, ScheduledTask>> cooldownTasks = new HashMap<>();
 
     public CooldownManager(HabilidadesBedwarsPlugin plugin) {
         this.plugin = plugin;
@@ -29,30 +30,27 @@ public class CooldownManager {
         cooldowns.get(player.getUniqueId()).put(ability.getId(), expirationTime);
         
         // Iniciar tarea dinámica para actualizar el nombre del item
-        org.bukkit.scheduler.BukkitTask task = new org.bukkit.scheduler.BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!player.isOnline()) {
-                    this.cancel();
-                    return;
-                }
-                
-                long remainingMillis = expirationTime - System.currentTimeMillis();
-                long remainingSeconds = (long) Math.ceil(remainingMillis / 1000.0);
-                
-                if (remainingSeconds <= 0) {
-                    updateItemName(player, ability, 0);
-                    // Avisar que la habilidad está lista
-                    player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
-                    this.cancel();
-                    cooldowns.get(player.getUniqueId()).remove(ability.getId());
-                    cooldownTasks.get(player.getUniqueId()).remove(ability.getId());
-                    return;
-                }
-                
-                updateItemName(player, ability, remainingSeconds);
+        ScheduledTask task = player.getScheduler().runAtFixedRate(plugin, t -> {
+            if (!player.isOnline()) {
+                t.cancel();
+                return;
             }
-        }.runTaskTimer(plugin, 0L, 20L); // Ejecutar cada segundo
+            
+            long remainingMillis = expirationTime - System.currentTimeMillis();
+            long remainingSeconds = (long) Math.ceil(remainingMillis / 1000.0);
+            
+            if (remainingSeconds <= 0) {
+                updateItemName(player, ability, 0);
+                // Avisar que la habilidad está lista
+                player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
+                t.cancel();
+                cooldowns.get(player.getUniqueId()).remove(ability.getId());
+                cooldownTasks.get(player.getUniqueId()).remove(ability.getId());
+                return;
+            }
+            
+            updateItemName(player, ability, remainingSeconds);
+        }, null, 1L, 20L); // Ejecutar cada segundo
         
         // Cancelar tarea anterior si existía (por si se reinicia el cooldown)
         if (cooldownTasks.get(player.getUniqueId()).containsKey(ability.getId())) {
@@ -106,7 +104,7 @@ public class CooldownManager {
         // Ya expiró, limpiamos la memoria
         playerCooldowns.remove(ability.getId());
         if (cooldownTasks.containsKey(player.getUniqueId())) {
-            org.bukkit.scheduler.BukkitTask task = cooldownTasks.get(player.getUniqueId()).remove(ability.getId());
+            ScheduledTask task = cooldownTasks.get(player.getUniqueId()).remove(ability.getId());
             if (task != null) task.cancel();
         }
         return false;
@@ -115,7 +113,7 @@ public class CooldownManager {
     public void cleanupPlayer(UUID uuid) {
         cooldowns.remove(uuid);
         if (cooldownTasks.containsKey(uuid)) {
-            for (org.bukkit.scheduler.BukkitTask task : cooldownTasks.get(uuid).values()) {
+            for (ScheduledTask task : cooldownTasks.get(uuid).values()) {
                 task.cancel();
             }
             cooldownTasks.remove(uuid);
@@ -124,8 +122,8 @@ public class CooldownManager {
 
     public void clearAll() {
         cooldowns.clear();
-        for (Map<String, org.bukkit.scheduler.BukkitTask> map : cooldownTasks.values()) {
-            for (org.bukkit.scheduler.BukkitTask task : map.values()) {
+        for (Map<String, ScheduledTask> map : cooldownTasks.values()) {
+            for (ScheduledTask task : map.values()) {
                 task.cancel();
             }
         }

@@ -7,7 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitTask;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,11 +28,11 @@ public class ActiveEntityManager implements Listener {
 
     // Registros asociados por jugador
     private final Map<UUID, List<Entity>> playerEntities = new ConcurrentHashMap<>();
-    private final Map<UUID, List<BukkitTask>> playerTasks = new ConcurrentHashMap<>();
+    private final Map<UUID, List<ScheduledTask>> playerTasks = new ConcurrentHashMap<>();
 
     // Registro global de entidades activas para limpieza absoluta
     private final List<Entity> allActiveEntities = Collections.synchronizedList(new ArrayList<>());
-    private final List<BukkitTask> allActiveTasks = Collections.synchronizedList(new ArrayList<>());
+    private final List<ScheduledTask> allActiveTasks = Collections.synchronizedList(new ArrayList<>());
 
     public ActiveEntityManager(HabilidadesBedwarsPlugin plugin) {
         this.plugin = plugin;
@@ -50,7 +50,7 @@ public class ActiveEntityManager implements Listener {
     /**
      * Registra una tarea Bukkit asociada a una habilidad de un jugador.
      */
-    public void trackTask(Player player, BukkitTask task) {
+    public void trackTask(Player player, ScheduledTask task) {
         if (task == null) return;
         playerTasks.computeIfAbsent(player.getUniqueId(), k -> Collections.synchronizedList(new ArrayList<>())).add(task);
         allActiveTasks.add(task);
@@ -71,7 +71,7 @@ public class ActiveEntityManager implements Listener {
     /**
      * Remueve el rastreo de una tarea una vez ejecutada.
      */
-    public void untrackTask(BukkitTask task) {
+    public void untrackTask(ScheduledTask task) {
         if (task == null) return;
         allActiveTasks.remove(task);
         playerTasks.values().forEach(list -> list.remove(task));
@@ -81,9 +81,9 @@ public class ActiveEntityManager implements Listener {
      * Cancela tareas y elimina entidades de un jugador específico.
      */
     public void cleanupPlayer(UUID playerId) {
-        List<BukkitTask> tasks = playerTasks.remove(playerId);
+        List<ScheduledTask> tasks = playerTasks.remove(playerId);
         if (tasks != null) {
-            for (BukkitTask task : tasks) {
+            for (ScheduledTask task : tasks) {
                 try {
                     task.cancel();
                 } catch (Exception ignored) {}
@@ -108,7 +108,7 @@ public class ActiveEntityManager implements Listener {
      * Limpieza total requerida en onDisable() o reinicio de arena.
      */
     public void cleanupAll() {
-        for (BukkitTask task : allActiveTasks) {
+        for (ScheduledTask task : allActiveTasks) {
             try {
                 task.cancel();
             } catch (Exception ignored) {}
